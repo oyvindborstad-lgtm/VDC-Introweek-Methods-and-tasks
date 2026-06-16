@@ -1,0 +1,215 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "ui_kits/website/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Barlow Semi Condensed|Jost))/i]",
+        "message": "Font not provided by the design system. Available: Barlow Semi Condensed, Jost."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {},
+    "tokens": [
+      "--bg",
+      "--bg-accent",
+      "--bg-accent-soft",
+      "--bg-dark",
+      "--bg-soft",
+      "--dur-1",
+      "--dur-2",
+      "--dur-3",
+      "--ease",
+      "--fg-accent",
+      "--fg-inverse",
+      "--fg1",
+      "--fg2",
+      "--fg3",
+      "--font-body",
+      "--font-display",
+      "--font-mono",
+      "--fs-2xl",
+      "--fs-3xl",
+      "--fs-4xl",
+      "--fs-base",
+      "--fs-hero",
+      "--fs-lg",
+      "--fs-md",
+      "--fs-sm",
+      "--fs-xl",
+      "--fs-xs",
+      "--ink-black",
+      "--lean-blue",
+      "--lean-blue-100",
+      "--lean-blue-20",
+      "--lean-blue-40",
+      "--lean-blue-60",
+      "--lean-blue-80",
+      "--lean-green",
+      "--lean-green-100",
+      "--lean-green-20",
+      "--lean-green-40",
+      "--lean-green-60",
+      "--lean-green-80",
+      "--lean-lime",
+      "--lean-red",
+      "--lean-teal",
+      "--lh-loose",
+      "--lh-normal",
+      "--lh-snug",
+      "--lh-tight",
+      "--paper",
+      "--paper-warm",
+      "--paper-warm-2",
+      "--r-0",
+      "--r-1",
+      "--r-2",
+      "--r-3",
+      "--r-full",
+      "--r-pill",
+      "--rule",
+      "--rule-strong",
+      "--s-1",
+      "--s-2",
+      "--s-3",
+      "--s-4",
+      "--s-5",
+      "--s-6",
+      "--s-7",
+      "--s-8",
+      "--s-9",
+      "--shadow-0",
+      "--shadow-1",
+      "--shadow-2",
+      "--shadow-3",
+      "--shadow-focus",
+      "--track-caps",
+      "--track-normal",
+      "--track-tight",
+      "--track-wide"
+    ],
+    "tokenKinds": {
+      "--lean-blue": "color",
+      "--lean-green": "color",
+      "--lean-teal": "color",
+      "--lean-lime": "color",
+      "--lean-red": "color",
+      "--lean-blue-100": "color",
+      "--lean-blue-80": "color",
+      "--lean-blue-60": "color",
+      "--lean-blue-40": "color",
+      "--lean-blue-20": "color",
+      "--lean-green-100": "color",
+      "--lean-green-80": "color",
+      "--lean-green-60": "color",
+      "--lean-green-40": "color",
+      "--lean-green-20": "color",
+      "--paper": "color",
+      "--paper-warm": "color",
+      "--paper-warm-2": "color",
+      "--ink-black": "color",
+      "--rule": "color",
+      "--rule-strong": "color",
+      "--fg1": "color",
+      "--fg2": "color",
+      "--fg3": "color",
+      "--fg-inverse": "color",
+      "--fg-accent": "color",
+      "--bg": "color",
+      "--bg-soft": "color",
+      "--bg-dark": "color",
+      "--bg-accent": "color",
+      "--bg-accent-soft": "color",
+      "--r-0": "other",
+      "--r-1": "spacing",
+      "--r-2": "spacing",
+      "--r-3": "spacing",
+      "--r-pill": "spacing",
+      "--r-full": "spacing",
+      "--s-1": "spacing",
+      "--s-2": "spacing",
+      "--s-3": "spacing",
+      "--s-4": "spacing",
+      "--s-5": "spacing",
+      "--s-6": "spacing",
+      "--s-7": "spacing",
+      "--s-8": "spacing",
+      "--s-9": "spacing",
+      "--shadow-0": "shadow",
+      "--shadow-1": "shadow",
+      "--shadow-2": "shadow",
+      "--shadow-3": "shadow",
+      "--shadow-focus": "shadow",
+      "--ease": "other",
+      "--dur-1": "other",
+      "--dur-2": "other",
+      "--dur-3": "other",
+      "--font-display": "font",
+      "--font-body": "font",
+      "--font-mono": "font",
+      "--fs-xs": "spacing",
+      "--fs-sm": "spacing",
+      "--fs-base": "spacing",
+      "--fs-md": "spacing",
+      "--fs-lg": "spacing",
+      "--fs-xl": "spacing",
+      "--fs-2xl": "spacing",
+      "--fs-3xl": "spacing",
+      "--fs-4xl": "spacing",
+      "--fs-hero": "spacing",
+      "--lh-tight": "other",
+      "--lh-snug": "other",
+      "--lh-normal": "other",
+      "--lh-loose": "other",
+      "--track-tight": "spacing",
+      "--track-normal": "other",
+      "--track-wide": "spacing",
+      "--track-caps": "spacing"
+    },
+    "fontFamilies": [
+      "Barlow Semi Condensed",
+      "Jost"
+    ]
+  }
+}

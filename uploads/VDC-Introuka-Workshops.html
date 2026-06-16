@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VDC Compass · Introuka – Workshops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ntnu:#00509E; --ntnu-dark:#003a73; --ntnu-soft:#eef3fb; --ntnu-line:#cfdaf1;
+  --cardinal:#8C1515; --cardinal-dark:#631212; --red:#B1040E; --cardinal-soft:#f3e3e3; --cardinal-line:#e3cccc;
+  --ink:#1c1f26; --ink-2:#525a67; --muted:#6a7280; --faint:#aab0bb;
+  --bg:#f6f5f1; --card:#ffffff; --cloud:#fbfaf7; --line:#e4e2dc; --line-2:#efeee9; --hover:#f1efe9;
+  --green:#2e7d57; --green-soft:#e3f1ea; --yellow:#d98a1f; --yellow-soft:#fbeed6;
+  --d1:#6096d0; --d2:#ef8114; --d3:#3cbfbe; --d4:#f7d019; --d5:#b01b81; --d6:#482776;
+  --serif:'Source Serif 4',Georgia,serif; --sans:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --r:10px; --r-lg:16px; --r-xl:24px;
+  --shadow:0 1px 3px rgba(28,31,38,.04),0 8px 24px rgba(28,31,38,.06);
+  --shadow-sm:0 1px 3px rgba(28,31,38,.05);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+svg{width:16px;height:16px;flex-shrink:0}
+button:focus-visible,a:focus-visible{outline:2.5px solid var(--ntnu);outline-offset:2px;border-radius:6px}
+.tnum{font-variant-numeric:tabular-nums}
+/* oppgave type + method */
+.otype{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:6px;margin-bottom:7px}
+.otype.praktisk{background:var(--green-soft);color:var(--green)}
+.otype.refleksjon{background:var(--ntnu-soft);color:var(--ntnu)}
+.otype.analyse{background:var(--cardinal-soft);color:var(--cardinal)}
+.how{margin:0 18px 12px;font-size:13.5px;color:var(--ink-2);background:var(--cloud);border:1px solid var(--line);border-radius:var(--r);padding:11px 14px;line-height:1.5}
+.how b{color:var(--ink)}
+.wsh{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.wsh svg{color:var(--cardinal)}
+
+.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;gap:12px}
+.mark{width:36px;height:36px;border-radius:var(--r);background:var(--ntnu);display:grid;place-items:center;flex-shrink:0}
+.mark span{color:#fff;font-family:var(--serif);font-weight:700;font-size:18px}
+.top .nm{font-family:var(--serif);font-size:20px;font-weight:600}
+.top .nm small{font-family:var(--sans);font-size:11px;letter-spacing:1.4px;color:var(--muted);font-weight:700;display:block;margin-top:-2px}
+.top .badge{margin-left:12px;display:flex;align-items:center;gap:7px;background:var(--green-soft);color:var(--green);font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px}
+.top .badge svg{width:13px;height:13px}
+.rolesw{margin-left:auto;display:flex;background:var(--line-2);border-radius:999px;padding:3px}
+.rolesw button{font-size:12.5px;font-weight:800;color:var(--ink-2);padding:7px 15px;border-radius:999px;display:flex;align-items:center;gap:7px;transition:.14s}
+.rolesw button svg{width:14px;height:14px}
+.rolesw button.on{background:var(--card);box-shadow:var(--shadow-sm)}
+.rolesw button.on[data-r="student"]{color:var(--ntnu)}
+.rolesw button.on[data-r="mentor"]{color:var(--cardinal)}
+.rolebar{display:flex;align-items:center;gap:11px;border-radius:var(--r-lg);padding:13px 18px;margin-bottom:8px;font-size:13.5px;font-weight:600}
+.rolebar.student{background:var(--ntnu-soft);color:var(--ntnu-dark)}
+.rolebar.mentor{background:var(--cardinal-soft);color:var(--cardinal-dark)}
+.rolebar svg{width:18px;height:18px;flex-shrink:0}
+.notat{margin:0 18px 14px;border:1.5px dashed var(--line);border-radius:var(--r);padding:13px 15px;color:var(--muted);font-size:13px;display:flex;align-items:center;gap:8px;background:var(--cloud)}
+.notat svg{width:15px;height:15px}
+/* context selector */
+.ctxbar{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);margin:8px 0 18px}
+.ctxbar .cth{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;margin-bottom:11px}
+.ctxbar .cth svg{color:var(--ntnu)}
+.ctxrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ctxrow select,.ctxrow input{border:1.5px solid var(--line);border-radius:999px;padding:10px 16px;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;font-weight:600;min-width:240px}
+.ctxrow select:focus,.ctxrow input:focus{outline:none;border-color:var(--ntnu)}
+.ctx-chosen{margin-top:13px;background:var(--ntnu-soft);border:1px solid var(--ntnu-line);border-radius:var(--r);padding:13px 15px;font-size:14px;color:var(--ink-2);line-height:1.5}
+.ctx-chosen b{color:var(--ntnu-dark)}
+.ctx-chosen .ct-tags{display:flex;gap:7px;margin-top:6px}
+.ctx-chosen .ct-tags span{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:6px;background:#fff;color:var(--ntnu)}
+.ctx-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--ntnu);background:var(--ntnu-soft);padding:4px 11px;border-radius:999px;margin:0 0 9px}
+.ctx-chip svg{width:12px;height:12px}
+.ctx-none{font-size:13px;color:var(--muted);margin-top:11px}
+/* answer fields */
+.afield{margin:0 18px 16px}
+.afield .al{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.afield .al svg{width:13px;height:13px;color:var(--ntnu)}
+.afield textarea{width:100%;min-height:74px;border:1.5px solid var(--line);border-radius:var(--r);padding:11px 13px;font-family:inherit;font-size:14px;color:var(--ink);background:#fffdf6;resize:vertical;line-height:1.5}
+.afield textarea:focus{outline:none;border-color:var(--ntnu);background:#fff}
+.saved-dot{font-size:11px;color:var(--green);font-weight:700;margin-left:auto;opacity:0;transition:.2s}
+.saved-dot.on{opacity:1}
+/* post-it board */
+.board-wrap{margin:18px 0 8px}
+.board-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:11px}
+.nbtn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;padding:9px 15px;border-radius:999px;background:var(--ntnu);color:#fff;cursor:pointer;border:none}
+.nbtn:hover{background:var(--ntnu-dark)}
+.nbtn svg{width:15px;height:15px}
+.nbtn.ghost{background:var(--card);border:1.5px solid var(--line);color:var(--ink-2)}
+.nbtn.ghost:hover{border-color:var(--ntnu-line);color:var(--ntnu)}
+.swatches{display:flex;gap:8px;margin-left:6px}
+.swatch{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
+.swatch.on{box-shadow:0 0 0 2.5px var(--ink)}
+.board{position:relative;height:380px;background:#eceae2;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1px);background-size:22px 22px;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;touch-action:none}
+.board .bhint{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13.5px;text-align:center;padding:20px;pointer-events:none}
+.note{position:absolute;width:158px;min-height:118px;border-radius:4px;box-shadow:0 6px 16px rgba(0,0,0,.16);transform:rotate(-1deg)}
+.note .nhead{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;cursor:grab;color:rgba(0,0,0,.4)}
+.note .nhead:active{cursor:grabbing}
+.note .nhead .grip{font-size:13px;letter-spacing:1px}
+.note .ndel{cursor:pointer;font-size:16px;font-weight:800;line-height:1;color:rgba(0,0,0,.4)}
+.note .ndel:hover{color:rgba(0,0,0,.75)}
+.note .ntext{padding:2px 12px 14px;min-height:78px;outline:none;font-size:13.5px;line-height:1.4;color:#2c2a1f;font-weight:600}
+.note .ntext:empty:before{content:"Skriv …";color:rgba(0,0,0,.3)}
+
+.tabs{position:sticky;top:65px;z-index:25;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabs-in{max-width:1140px;margin:0 auto;padding:10px 32px;display:flex;gap:8px;overflow-x:auto}
+.tab{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;font-size:13.5px;font-weight:700;color:var(--ink-2);border:1.5px solid var(--line);background:var(--card);transition:.15s var(--ease);cursor:pointer;white-space:nowrap}
+.tab svg{width:15px;height:15px}
+.tab:hover{border-color:var(--ntnu-line)}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.wrap{max-width:1140px;margin:0 auto;padding:40px 32px 100px}
+.eyebrow{display:flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.15em;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.eyebrow svg{width:15px;height:15px;color:var(--cardinal)}
+h1{font-family:var(--serif);font-size:clamp(2.2rem,1.3rem+2.8vw,3.2rem);font-weight:600;line-height:1.06;letter-spacing:-.025em;margin-bottom:14px}
+.lead{font-size:18px;color:var(--ink-2);max-width:780px}
+h2.sec{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.3px;margin:38px 0 14px}
+
+/* session pills (sub-nav) */
+.subnav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 26px}
+.spill{display:flex;align-items:center;gap:8px;padding:8px 13px;border-radius:999px;font-size:13px;font-weight:700;border:1.5px solid var(--line);background:var(--card);color:var(--ink-2);cursor:pointer;transition:.14s}
+.spill .d{width:9px;height:9px;border-radius:50%}
+.spill.on{color:#fff;border-color:transparent}
+
+/* week */
+.week{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:30px 0 8px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.day .dh{padding:12px 14px;border-bottom:1px solid var(--line-2);background:var(--cloud)}
+.day .dh .dd{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.day .dh .dn{font-family:var(--serif);font-size:16px;font-weight:600;margin-top:1px}
+.day .slots{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1}
+.slot{border-radius:var(--r);padding:10px 11px;font-size:12px;font-weight:600;line-height:1.3;border:1px solid var(--line);background:#fff;color:var(--ink-2)}
+.slot .st{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-bottom:3px}
+.slot.ws{cursor:pointer;color:#fff;border:none;transition:.15s var(--ease)}
+.slot.ws:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.slot.lunch{background:var(--green-soft);color:var(--green);text-align:center;font-weight:700;font-size:10.5px;letter-spacing:.06em}
+.slot.muted2{background:var(--line-2);color:var(--ink-2);border:none}
+
+/* dimension cards (home) */
+.dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:22px}
+.dim{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;box-shadow:var(--shadow-sm);cursor:pointer;transition:.16s var(--ease)}
+.dim:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--ntnu-line)}
+.dim .di{width:42px;height:42px;border-radius:var(--r);background:var(--ntnu-soft);color:var(--ntnu);display:grid;place-items:center;margin-bottom:13px}
+.dim .di svg{width:21px;height:21px}
+.dim h3{font-family:var(--serif);font-size:19px;font-weight:600;margin-bottom:5px}
+.dim p{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+
+/* anatomy */
+.anat{background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);padding:26px 28px;box-shadow:var(--shadow-sm);margin-top:14px}
+.anat h3{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:4px}
+.anat .sub{font-size:14px;color:var(--ink-2);margin-bottom:22px}
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.phase{border-radius:var(--r-lg);padding:18px;border:1px solid var(--line)}
+.phase.p1{background:#fbf7f7;border-color:var(--cardinal-soft)} .phase.p2{background:var(--ntnu-soft);border-color:var(--ntnu-line)} .phase.p3{background:var(--green-soft);border-color:#c4e3d3}
+.phase .pi{width:38px;height:38px;border-radius:var(--r);display:grid;place-items:center;color:#fff;margin-bottom:12px}
+.phase.p1 .pi{background:var(--cardinal)} .phase.p2 .pi{background:var(--ntnu)} .phase.p3 .pi{background:var(--green)}
+.phase .pi svg{width:19px;height:19px}
+.phase .pt{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.phase h4{font-family:var(--serif);font-size:17px;font-weight:600;margin:2px 0 6px}
+.phase p{font-size:13px;color:var(--ink-2);line-height:1.5}
+
+/* generic block */
+.block{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);margin:16px 0;overflow:hidden}
+.bh{display:flex;align-items:center;gap:13px;padding:15px 20px;border-bottom:1px solid var(--line-2)}
+.bh .bi{width:38px;height:38px;border-radius:var(--r);display:grid;place-items:center;color:#fff;flex-shrink:0}
+.bh .bi svg{width:19px;height:19px}
+.bh .phase-lbl{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.bh h3{font-family:var(--serif);font-size:18px;font-weight:600}
+.bh .time{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--ink-2);background:var(--line-2);padding:6px 12px;border-radius:999px;white-space:nowrap}
+.bb{padding:20px}
+.bb h5{font-size:13px;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;display:flex;align-items:center;gap:7px}
+.bb h5:first-child{margin-top:0}
+.bb h5 svg{width:14px;height:14px;color:var(--cardinal)}
+.bb p{font-size:14.5px;color:var(--ink-2);margin:6px 0}
+.bb ul{list-style:none;margin:6px 0}
+.bb li{font-size:14.5px;color:var(--ink-2);padding:6px 0 6px 26px;position:relative;line-height:1.5}
+.bb li::before{content:"";position:absolute;left:4px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--ntnu-line)}
+.bb li.chk::before{content:"✓";left:2px;top:5px;width:auto;height:auto;background:none;color:var(--green);font-weight:800;font-size:13px}
+.bb li.q::before{content:"?";left:2px;top:5px;width:auto;height:auto;background:none;color:var(--cardinal);font-weight:800;font-size:13px}
+.goal{display:flex;gap:14px;border-radius:var(--r-lg);padding:18px 22px;margin:18px 0;color:#fff}
+.goal .gi{flex-shrink:0;width:24px;height:24px}
+.goal{color:#fff}
+.goal .gl{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85;color:#fff}
+.goal p{font-size:16px;font-weight:600;line-height:1.45;margin-top:3px;color:#fff !important}
+.awareness{background:var(--cloud);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:var(--r);padding:13px 15px;margin-top:14px;font-size:14px;color:var(--ink-2)}
+.awareness b{color:var(--green)}
+.takeaway{display:flex;gap:15px;align-items:center;background:var(--ink);color:#fff;border-radius:var(--r-lg);padding:18px 22px;margin:18px 0}
+.takeaway .ti{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;flex-shrink:0}
+.takeaway .ti svg{width:21px;height:21px}
+.takeaway .tl{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.takeaway p{font-size:15.5px;font-weight:600;margin-top:2px}
+.tagrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.tag{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:var(--ntnu-soft);color:var(--ntnu)}
+
+/* oppgave cards */
+.opg{border:1px solid var(--line);border-radius:var(--r-lg);margin:14px 0;overflow:hidden;background:var(--card);box-shadow:var(--shadow-sm)}
+.opg .oh{display:flex;gap:13px;align-items:flex-start;padding:16px 18px}
+.opg .on{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#fff;font-family:var(--serif);font-weight:700;font-size:15px;flex-shrink:0}
+.opg .oq{font-size:14.5px;color:var(--ink);font-weight:600;line-height:1.5}
+.opg .oq .opt{font-weight:400;color:var(--ink-2)}
+.svar{margin:0 18px 16px;background:var(--green-soft);border:1px solid #c4e3d3;border-radius:var(--r);padding:13px 15px}
+.svar .sl{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:7px}
+.svar .sl svg{width:14px;height:14px}
+.svar p,.svar li{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.svar ul{list-style:none;margin:4px 0}
+.svar li{padding:3px 0 3px 16px;position:relative}
+.svar li::before{content:"–";position:absolute;left:0;color:var(--green);font-weight:700}
+
+/* kontekst library */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:10px}
+.kcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow-sm);border-top:4px solid var(--ntnu)}
+.kcard .ktags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.kcard .ktag{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:6px;background:var(--ntnu-soft);color:var(--ntnu)}
+.kcard .ktag.fase{background:var(--cloud);color:var(--ink-2)}
+.kcard h4{font-family:var(--serif);font-size:18px;font-weight:600;margin-bottom:7px}
+.kcard p{font-size:13.5px;color:var(--ink-2);line-height:1.5;margin:5px 0}
+.kcard .chall{font-size:13px;color:var(--cardinal-dark);background:var(--cardinal-soft);border-radius:8px;padding:9px 11px;margin-top:10px}
+.kcard.own{border-top-color:var(--cardinal);background:#fdfbfb}
+.kcard.own h4{color:var(--cardinal)}
+
+/* run-of-show */
+.run{margin:2px 0}
+.rline{display:flex;gap:16px;padding:13px 0;border-bottom:1px solid var(--line-2)}
+.rline:last-child{border-bottom:none}
+.rtime{flex-shrink:0;width:96px}
+.rtime .tm2{font-size:12.5px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.rtime .met{display:inline-block;font-size:9.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:5px;background:var(--line-2);padding:3px 7px;border-radius:6px}
+.rbody{flex:1}
+.rbody h6{font-size:14.5px;font-weight:700;margin-bottom:3px}
+.rbody p{font-size:13.5px;color:var(--ink-2);margin:0;line-height:1.5}
+.rbody .ment{font-size:12.5px;color:var(--ntnu-dark);background:var(--ntnu-soft);border-radius:8px;padding:7px 11px;margin-top:8px;display:flex;gap:7px;align-items:flex-start}
+.rbody .ment svg{width:14px;height:14px;flex-shrink:0;margin-top:2px;color:var(--ntnu)}
+
+/* do / dont / watch */
+.ddw{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.ddw .col{border-radius:var(--r-lg);padding:16px 17px;border:1px solid var(--line)}
+.ddw .col.do{background:var(--green-soft);border-color:#c4e3d3} .ddw .col.dont{background:#fdeeee;border-color:var(--cardinal-line)} .ddw .col.watch{background:var(--ntnu-soft);border-color:var(--ntnu-line)}
+.ddw .ch{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:11px}
+.ddw .ch svg{width:15px;height:15px}
+.ddw .col.do .ch{color:var(--green)} .ddw .col.dont .ch{color:var(--cardinal)} .ddw .col.watch .ch{color:var(--ntnu)}
+.ddw ul{list-style:none}
+.ddw li{font-size:13px;color:var(--ink-2);padding:5px 0 5px 19px;position:relative;line-height:1.45}
+.ddw li::before{position:absolute;left:0;top:5px;font-weight:800;font-size:12px}
+.ddw .do li::before{content:"✓";color:var(--green)} .ddw .dont li::before{content:"✕";color:var(--cardinal)} .ddw .watch li::before{content:"●";color:var(--ntnu);font-size:7px;top:9px}
+.ddw .extra{margin-top:11px;padding-top:11px;border-top:1px dashed var(--line)}
+.ddw .extra .et{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);margin-bottom:6px}
+
+/* facilitator */
+.sec2{margin-top:34px}
+.sec2 .lbl{display:flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.14em;font-weight:800;color:var(--cardinal);text-transform:uppercase;margin-bottom:10px}
+.sec2 .lbl svg{width:15px;height:15px}
+.sec2 h2{font-family:var(--serif);font-size:25px;font-weight:600;letter-spacing:-.3px;margin-bottom:6px}
+.sec2 .s2sub{font-size:15px;color:var(--ink-2);max-width:780px;margin-bottom:18px}
+.spgr{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fn{border-radius:var(--r-lg);padding:18px 20px;color:#fff}
+.fn .fh{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:18px;font-weight:600;margin-bottom:6px}
+.fn .fh svg{width:20px;height:20px}
+.fn p{font-size:13.5px;line-height:1.5;opacity:.95}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow-sm)}
+.mini .mi{width:38px;height:38px;border-radius:var(--r);background:var(--ntnu-soft);color:var(--ntnu);display:grid;place-items:center;margin-bottom:12px}
+.mini .mi svg{width:19px;height:19px}
+.mini h4{font-size:15px;font-weight:700;margin-bottom:5px}
+.mini p{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.journey{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.jstep{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow-sm);position:relative}
+.jstep .jn{font-family:var(--serif);font-size:13px;font-weight:700;color:#fff;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;margin-bottom:11px}
+.jstep h4{font-family:var(--serif);font-size:17px;font-weight:600;margin-bottom:6px}
+.jstep p{font-size:13px;color:var(--ink-2);line-height:1.5}
+.route{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+.route .rstep{padding:11px 17px;border-radius:999px;font-size:13.5px;font-weight:700;border:1.5px solid var(--line);background:var(--card);color:var(--ink-2)}
+.route .rstep.now{background:var(--ntnu);border-color:var(--ntnu);color:#fff}
+.route .rarr{color:var(--faint);font-weight:700}
+.srcnote{font-size:12px;color:var(--muted);margin-top:10px}
+.link-fk{font-size:13.5px;color:var(--ink-2);background:var(--ntnu-soft);border-radius:var(--r);padding:13px 16px;margin:14px 0;display:flex;gap:10px}
+.link-fk svg{width:17px;height:17px;color:var(--ntnu);flex-shrink:0;margin-top:1px}
+.link-fk b{color:var(--ntnu-dark)}
+.foot{max-width:1140px;margin:40px auto 0;padding:24px 32px 60px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.7}
+.foot b{color:var(--ink-2)}
+@media(max-width:920px){.week{grid-template-columns:1fr 1fr}.phases,.spgr,.journey{grid-template-columns:1fr}.ddw{grid-template-columns:1fr}}
+@media(max-width:600px){.week{grid-template-columns:1fr}.wrap,.top-in,.tabs-in{padding-left:18px;padding-right:18px}}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="top-in">
+  <div class="mark"><span>N</span></div>
+  <div class="nm">Introuka · Workshops<small>NTNU × STANFORD · VDC COMPASS</small></div>
+  <div class="rolesw" id="rolesw">
+    <button data-r="student" class="on" onclick="setRole('student')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5"/></svg>Student</button>
+    <button data-r="mentor" onclick="setRole('mentor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9 6.7 19.2l1-5.8L3.5 9.2l5.9-.9z"/></svg>Mentor</button>
+  </div>
+  <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>3.–7. august 2026</div>
+</div></div>
+<div class="tabs"><div class="tabs-in" id="tabs"></div></div>
+<div class="wrap" id="view"></div>
+<div class="foot">
+  <b>Modell for hver sesjon:</b> Martin Fischer setter standarden i plenum → arbeidsgruppene (5 stk) trener på en valgt kontekst og bygger awareness → mentorteamet (20 studenter / 4 grupper) deler og reflekterer på tvers, fasilitert av mentor.<br>
+  <b>Faglig forankring:</b> Stanford CIFE (Fischer/Kunz), Aurora 2, Heathrow T5, FREYR Giga Arctic, Koskela (TFV), Modig (flyteffektivitet), Kniberg (Push/Pull), terningspill/Parade of Trades, SPGR (Sjøvold/NTNU), BM6101.
+</div>
+
+<script>
+/* ============================ DATA ============================ */
+const ANAT=[
+  {cls:"p1",tag:"Plenum · 0:00–0:40",ic:"present",h:"Martin Fischer setter standarden",p:"Bakgrunn, tankesett og hensikt: hvorfor VDC er bygd slik, og hva elementet løser. Felles for alle mentorteam."},
+  {cls:"p2",tag:"Workshop 1 · 0:50–1:50",ic:"group",h:"Arbeidsgruppene trener",p:"Grupper på 5 jobber med en valgt kontekst og sitter igjen med en tydelig awareness."},
+  {cls:"p3",tag:"Workshop 2 · 2:00–2:50",ic:"chat",h:"Mentorteamet reflekterer på tvers",p:"De fire gruppene deler erfaringer. Mentor fasiliterer refleksjonen og sikrer at de viktige momentene tas opp."}
+];
+
+/* ---- generic context library (students choose, or bring own case) ---- */
+const KONTEKST=[
+  {t:"Næringsbygg under rehabilitering",sektor:"Bygg",fase:"Prosjektering",s:"Et eldre kontorbygg skal oppgraderes mens deler er i full drift. Stramt budsjett, høye miljøkrav (BREEAM) og mange tekniske fag.",c:"Sene tverrfaglige avklaringer gir fare for omarbeiding og budsjettsprekk."},
+  {t:"Boligprosjekt med gjentakende enheter",sektor:"Bygg",fase:"Byggefase",s:"Boligblokk med mange like leiligheter og mange underentreprenører som skal koordineres.",c:"Ujevn flyt og venting mellom fag presser fremdrift og kvalitet."},
+  {t:"Veiprosjekt med krevende grunnforhold",sektor:"Anlegg",fase:"Bygging",s:"Veistrekning med vanskelig grunn, naboer og trafikk som skal opprettholdes underveis.",c:"Stor usikkerhet og variabilitet gjør fremdriften uforutsigbar."},
+  {t:"Baneprosjekt med mange grensesnitt",sektor:"Infrastruktur",fase:"Prosjektering → bygging",s:"Jernbane-/tunnelprosjekt med signal, spor og sikkerhet, og offentlig byggherre.",c:"Sterke gjensidige avhengigheter og sene beslutninger skaper flaskehalser."},
+  {t:"Industrianlegg med samtidig design og bygging",sektor:"Industri",fase:"Gjennomføring",s:"Et prosessanlegg der teknologi utvikles mens bygget reises (jf. FREYR Giga Arctic).",c:"Ekstrem usikkerhet krever raske, pålitelige beslutninger på sviktende grunnlag."},
+  {t:"Komplekst formålsbygg (f.eks. sykehus)",sektor:"Bygg",fase:"Prosjektering",s:"Bygg med svært mange tekniske fag og brukere som skal involveres.",c:"Kollisjoner, endringer og koordinering truer både kostnad og kvalitet."},
+  {t:"Ferdigstillelse og overlevering til drift",sektor:"Alle sektorer",fase:"Ferdigstillelse / drift",s:"Systematisk ferdigstillelse og overlevering av et prosjekt til driftsorganisasjonen.",c:"Informasjon faller mellom faser; mangelfull dokumentasjon gir driftsproblemer."}
+];
+
+/* ---- run-of-show + mentor role (shared) ---- */
+const W1RUN=[
+  {time:"0–5 min",met:"Brief",h:"Ramme oppgaven",p:"Mentor presenterer oppgaven, viser mal/eksempel og gjør leveransen og tiden klar. Gruppen bekrefter valgt kontekst.",ment:"Du: maks 5 min – la gruppene få mest mulig arbeidstid."},
+  {time:"5–13 min",met:"Individuelt",h:"Stille start",p:"Hver deltaker noterer egne tanker alene før noen snakker høyt.",ment:"Du: hold det stille – gir rolige stemmer plass og hindrer gruppetenkning."},
+  {time:"13–43 min",met:"Gruppe á 5",h:"Løs oppgavene",p:"Gruppen jobber gjennom oppgavene på sin valgte kontekst. Leder styrer, sekretær skriver, tidtaker passer klokka.",ment:"Du: sirkulér, lytt, still åpne spørsmål – ikke gi svar."},
+  {time:"43–53 min",met:"Syntese",h:"Klargjør deling",p:"Gruppen koker ned til ett delbart bilde (maks 2 min) og velger presentatør.",ment:"Du: be gjerne en som sjelden presenterer ta ordet i workshop 2."},
+  {time:"53–60 min",met:"Selvsjekk",h:"Sjekk mot awareness",p:"Gruppen sjekker leveransen mot awareness-målet for sesjonen.",ment:"Du: rask runde – er alle med, og treffer de poenget?"}
+];
+const W2RUN=[
+  {time:"0–5 min",met:"Ramme",h:"Sett rammen og kjørereglene",p:"Mentor rammer refleksjonen og minner om at det er trygt å være uenig.",ment:"Du: etabler psykologisk trygghet før dere starter."},
+  {time:"5–20 min",met:"Deling",h:"Gruppene deler",p:"De fire gruppene deler leveransen, 2–3 min hver, med én oppklarende kommentar mellom hver.",ment:"Du: hold tiden og noter mønstre du vil løfte fram senere."},
+  {time:"20–38 min",met:"Fasilitert dialog",h:"Refleksjon på tvers",p:"Mentor styrer refleksjonsspørsmålene og henter fram likheter og ulikheter mellom kontekstene.",ment:"Du: still spørsmålene, la studentene svare – snakk minst mulig selv."},
+  {time:"38–46 min",met:"Pluss / Delta",h:"Oppsummering",p:"Mentor sikrer must-cover-momentene, og gruppa setter opp Pluss/Delta + Key takeaways.",ment:"Du: sjekk av «Sikre at dette tas opp»-lista før dere går videre."},
+  {time:"46–50 min",met:"Bro",h:"Bro til plenum",p:"Felles takeaway, og forbered det som tas videre til plenumsdelingen på tvers av mentorteam.",ment:"Du: knytt det til studentenes egne prosjekter."}
+];
+const W1DD={
+  do:["Sirkulér mellom gruppene og lytt mer enn du snakker.","Still åpne spørsmål som løfter tenkningen («hva om…?», «hvorfor det?»).","Hold tiden synlig; gi 10- og 2-minutters varsel.","Sørg for at alle fem bidrar – be den stille om en mening."],
+  dont:["Ikke gi fasitsvar eller overta oppgaven.","Ikke la én person dominere arbeidet.","Ikke la gruppa gå i detaljfella – styr mot leveransen.","Ikke korriger for tidlig; la dem prøve og feile litt."],
+  watch:["Gruppedynamikken (SPGR): hvem styrer, hvem mangler stemme?","Om de holder seg til oppgaven og valgt kontekst.","Energinivå og forståelse – henger alle med?"]
+};
+const W2DD={
+  do:["Fasilitér – la studentene snakke mest.","Trekk eksplisitt fram likheter og ulikheter mellom kontekstene.","Anerkjenn bidrag og gjør det trygt å være uenig (Opposisjon).","Bind refleksjonen til studentenes egne prosjekter."],
+  dont:["Ikke hold et miniforedrag som «fasit».","Ikke la delingen bli fire løsrevne monologer.","Ikke gå videre før momentene som må tas opp er berørt.","Ikke ranger eller døm gruppenes svar."],
+  watch:["At de viktige momentene faktisk kommer fram.","Om refleksjonen blir konkret eller bare svever.","Tiden – hold av plass til Pluss/Delta og bro til plenum."]
+};
+
+/* ---- the 6 sessions ---- */
+const SESS=[
+{ no:1,key:"intro",color:"#1c1f26",day:"Tirsdag 04.08 · Dag 1",time:"09:00–12:00",
+  tema:"VDC Intro – det store bildet",el:"Plenum: «VDC as a Whole» (Martin Fischer)",
+  goal:"Forstå hvordan VDC hjelper prosjektteam med å adressere utfordringer og mål, og hvordan VDC-elementene bidrar både individuelt og samlet.",
+  fischer:["VDC er en metode og ledelsesramme – ikke ett verktøy.","De fire elementene forankres i kundens og prosjektets mål (CO/PO).","Helheten gir mer problemløsningskraft enn noe enkeltelement.","Inspirasjon fra ekte prosjekter (FREYR, høyytelsesbygg)."],
+  connect:"Startpunktet: her velger gruppa sin kontekst og definerer 2–3 forbedringsmål som bæres gjennom alle de neste sesjonene.",
+  oppgaver:[
+    {n:1,type:"refleksjon",q:"Hvorfor leverer prosjekter som ligner deres kontekst ofte ikke godt nok på budsjett, tid, kvalitet eller miljø?",how:"Idémyldre i 5 min. Skriv én årsak per gul post-it og heng dem på flippover. Grupper deretter like årsaker.",svar:["Uklar prosjektledelse og manglende usikkerhetsstyring","Utydelige kravspesifikasjoner","Lite standardisering, erfaringsoverføring og gjentakelse","Sen tverrfaglig avklaring → omarbeiding"]},
+    {n:2,type:"praktisk",q:"Hvilke 2–3 forbedringsmål bør konteksten ha, og hvilke VDC-tiltak kan bidra til hvert mål?",how:"Skriv hvert forbedringsmål (f.eks. «levere på budsjett», «−20 % tid», «−20 % karbon») på en grønn lapp øverst på arket. Heng konkrete tiltak (blå lapper) under riktig mål.",svar:["Standardisering og erfaringsoverføring via BIM og ICE/Big Room","Kravspesifikasjon, sjekklister og evalueringsskjema","Begynne å måle; bruke Choosing by Advantage for valg"]},
+    {n:3,type:"praktisk",q:"Hvilket VDC-element hører hvert tiltak til, og hva er elementets rolle?",how:"Lag fire kolonner på tavla: VIA · ICE · PPM · Samspill. Flytt tiltakslappene fra oppgave 2 til riktig kolonne, og skriv én setning om rollen til hvert element.",svar:["VIA: informasjonshåndtering og -flyt; kommunisere hva som skal bygges (BIM)","ICE: arena for tverrfaglig avklaring og erfaringsdeling (Big Room)","PPM: måle definerte parametere og finne forbedringspotensial (økonomi, HMS, kvalitet, miljø)","Samspill: BIM som verktøy i ICE for visualisering og samhandling"]},
+    {n:4,type:"refleksjon",q:"Hvilke 2–3 utfordringer kan oppstå når VDC skal innføres i konteksten, og hvordan vil dere møte dem?",how:"Diskuter i gruppa. Noter utfordring + tiltak parvis på et ark.",svar:["Må forankres i prosjektledelsen","Brukerne må støtte VDC; ufarliggjøre og motivere","Mange kan lite om VDC – informere om formålet og lære bort konseptet"]},
+    {n:5,type:"refleksjon",q:"(Valgfri) Hvor sikre er dere – på en skala 1–5 – på at forslagene vil oppfylle kundens og prosjektets mål?",how:"Hver person setter en verdi i stillhet; begrunn deretter de største forskjellene i gruppa.",svar:["Diskuter hva som må på plass for å øke sikkerheten."]}
+  ],
+  reflect:["Hvordan var årsakene like/ulike på tvers av kontekstene?","Hvilket element tror dere blir vanskeligst å få til i praksis?","Hvor ser dere den sterkeste koblingen mellom to elementer?"],
+  facilitate:["Sikre at alle fire elementer kobles til CO/PO.","Få fram «helheten > delene» med konkrete eksempler.","Løft fram at VDC er en metode, ikke teknologi."],
+  awareness:"VDC er en sammenheng, ikke en verktøykasse – elementene løser ulike, men koblede problemer.",
+  material:["Kontekstbibliotek / egen case","VDC-kart-mal","Forkursets rammeverksdiagram"],
+  mentorTips:["Følg med på «verktøy-fellen»: vri dem tilbake til sammenhengen og målene.","Pass på at de forankrer i CO/PO før de diskuterer elementer.","SPGR-blikk: hvem dominerer (Kontroll), hvem er passiv (Avhengighet)?","Tidsboks presentasjonene hardt – sett tonen for hele uka."],
+  takeaway:"VDC binder folk, verktøy, prosess og mål sammen – elementene forsterker hverandre." },
+
+{ no:2,key:"metrics",color:"#8C1515",day:"Tirsdag 04.08 · Dag 1",time:"13:00–16:00",
+  tema:"Målinger (Metrics)",el:"Plenum: «Metrics / Målstyring» (Martin Fischer)",
+  goal:"Forstå de tre VDC-nivåene (kundemål, prosjektmål, produksjonsmål) og kontrollerbare faktorer, og kunne bygge en sammenhengende målkjede.",
+  fischer:["Metrics går fra HVORFOR (CO) via HVA (PO) til HVORDAN (produksjonsmålinger + kontrollerbare faktorer).","Vage mål må gjøres målbare – «du styrer det du måler».","Produksjonsmålinger er tidlige varsellamper.","Kontrollerbare faktorer er knappene teamet kan vri på."],
+  connect:"Bygger direkte på forbedringsmålene gruppa satte i VDC Intro – nå gjøres de målbare.",
+  oppgaver:[
+    {n:1,type:"praktisk",q:"Hvilke av forbedringsmålene hjelper hverandre (synergi)?",how:"Tegn de 2–3 målene som bobler på et storark. Trekk en grønn pil mellom mål som drar i samme retning, og skriv hvorfor på pilen.",svar:["Kortere prosjekterings-/byggetid gjør det lettere å holde budsjett","Karbonkutt kan redusere kostnad via mindre transport og materialforbruk"]},
+    {n:2,type:"analyse",q:"Hvor er målene i konflikt med hverandre?",how:"Trekk en rød strek mellom mål som motarbeider hverandre, og skriv kort hvorfor.",svar:["Kortere prosjekteringstid vs. kvalitetssikring og karbon","Kortere byggetid kan gi mer transport/forsering og økte kostnader"]},
+    {n:3,type:"praktisk",q:"Hvilken produksjonsmåling, med tallfestet mål, passer for hvert VDC-element (ICE, VIA, PPM)?",how:"Fyll ut måltavla (storark/mal): én rad per element med kolonnene Måling · Enhet · Målsetting.",svar:["ICE: andel beslutninger tatt i møtet – %, mål > X","VIA: prosjekteringsfeil funnet tidlig – antall/%, mål","PPM: PPU (planlagt produksjon utført) – %, mål > X"]},
+    {n:4,type:"analyse",q:"Hvordan bidrar én av produksjonsmålingene til at dere når ett bestemt forbedringsmål?",how:"Velg ett mål og én måling. Skriv sammenhengen i én klar setning.",svar:["Ukentlige PPU-avstemninger gir tidlig varsel om forsinkelse → tiltak → treffer fremdriftsmålet"]},
+    {n:5,type:"praktisk",q:"Hvordan henger målkjeden sammen – fra prosjektmål helt ned til det dere kan styre?",how:"Lag tre rader med lapper: Prosjektmål (øverst) → Produksjonsmåling (midten) → Kontrollerbar faktor (nederst). Trekk streker mellom lappene som hører sammen, så hele kjeden vises.",svar:["For hver produksjonsmåling: definer 1–2 kontrollerbare faktorer","Kjeden viser at en daglig handling kan spores opp til kundens mål"]}
+  ],
+  reflect:["Er målingene faktisk målbare – eller fortsatt ønsker?","Henger kontrollerbare faktorer logisk sammen med målingene?","Hvilke mål ville skapt mest felles retning?"],
+  facilitate:["Sikre skillet produksjonsmåling (utfall) vs. kontrollerbar faktor (handling).","Utfordre vage formuleringer – be om tall og enhet.","Knytt kjeden tilbake til kundens hvorfor (CO)."],
+  awareness:"En daglig handling kan spores helt opp til kundens mål – det er det målkjeden gir.",
+  material:["Forbedringsmål fra VDC Intro","Måltavle-mal","Metrics-pyramide fra forkurset"],
+  mentorTips:["Vanligste feil er vage mål – be alltid om tall og enhet.","Hold fast på skillet utfall vs. handling.","La gruppene utfordre hverandres målkjeder (Opposisjon).","Koble til den enkeltes eget prosjekt: «hva er DIN kundes hvorfor?»"],
+  takeaway:"Du styrer det du måler. En tydelig målkjede gir hele teamet samme retning." },
+
+{ no:3,key:"ice",color:"#00509E",day:"Onsdag 05.08 · Dag 2",time:"09:00–12:00",
+  tema:"ICE – beslutninger i sanntid",el:"Plenum: «ICE» (Martin Fischer)",
+  goal:"Kunne gjenkjenne gjensidig avhengige oppgaver, se hvordan en ICE-sesjon løser dem, og planlegge en ICE-sesjon (mål, deltakere, forberedelser, målinger).",
+  fischer:["Tre arbeidsflyt-typer: pooled, sekvensiell, gjensidig (reciprocal).","ICE er laget for de gjensidige problemene.","ICE reduserer latens og gir mer pålitelige beslutninger.","Aurora 2: gjensidig samproduksjon ga 23 mot 47 kWh/m³."],
+  connect:"Tar en konkret, gjensidig problemstilling fra konteksten og planlegger og kjører en ICE-sesjon for den. Bygger opp mot den fulle 1-times ICE-simuleringen tirsdag kveld.",
+  oppgaver:[
+    {n:1,type:"analyse",q:"Hvilken gjensidig avhengig problemstilling fra konteksten egner seg for en ICE-sesjon?",how:"Velg ett tema der minst to fag må løse noe sammen. Skriv det som ett tydelig beslutningsspørsmål: «Vi må bestemme …».",svar:["F.eks. plassering av bygg på trang tomt, eller et energimål som krever ARK + RIV samtidig","Velg noe konkret nok til å kunne besluttes i løpet av en kort økt"]},
+    {n:2,type:"praktisk",q:"Hvordan ser en god ICE-sesjon ut for denne problemstillingen?",how:"Planlegg på et A3-ark: a) skriv hvem som inviteres (rolle på lapper, plasser dem rundt «bordet»), b) hvilket underlag må være klart, c) agenda i 3–4 punkter.",svar:["a) ARK, RIV/RIB, byggherre – fordi de eier konsekvensene","b) 2–3 konseptforslag, oppdatert modell, kostnadsbilde","c) hensikt → gjennomgang → beslutning → ansvar videre"]},
+    {n:3,type:"praktisk",q:"Klarer dere å ta beslutningen sammen i sanntid? Kjør en mini ICE-sesjon.",how:"Fordel fagrollene fra oppgave 2 i gruppa. Tidtaker styrer. Kjør sesjonen og ta den faktiske beslutningen på 15 minutter. Skriv ned beslutningen og hvem som gjør hva videre.",svar:["Poenget er å oppleve sanntidsbeslutning på et gjensidig problem","Dette er en forsmak på den fulle 1-times ICE-simuleringen tirsdag kveld"]},
+    {n:4,type:"analyse",q:"Hvordan kan dere måle om ICE-sesjonen var vellykket – under, rett etter, og en måned etter?",how:"Skriv 1–2 tallfestede produksjonsmålinger for hvert av de tre tidspunktene.",svar:["Under: underlag på plass / forberedt (> 4,5); riktige deltakere til stede (> 90 %)","Rett etter: underlag godt nok til beslutning? (> 90 %); ga møtet verdi? (1–5, > 4,5)","En måned etter: antall omgjorte beslutninger (mål: lavt)"]}
+  ],
+  reflect:["Hva gjorde beslutningene raske og trygge?","Hva ville stoppet flyten i en ekte økt?","Hvor mye ventetid (latens) sparte dere mot en sekvensiell prosess?"],
+  facilitate:["Hold fokus på de gjensidige problemene – ikke det sekvensielle.","Fremhev forberedelse og fasilitering som forskjellen på ICE og statusmøte.","Knytt til Aurora 2: gjensidig arbeid ga målbart bedre resultat."],
+  awareness:"Forskjellen på sekvensiell og gjensidig arbeidsflyt – og hva som skal til for at en ICE-økt faktisk tar beslutninger.",
+  material:["Valgt kontekst","ICE-planmal","FREYR ICE-målinger som eksempel","Rollekort (fag/beslutningstakere)"],
+  mentorTips:["Sørg for at de planlegger for gjensidige problemer – ikke noe sekvensielt.","I live-ICE: hold tempo, tving fram beslutninger.","Observer hvem som tar fasilitatorrollen (SPGR: Kontroll).","Knytt til kveldens ICE-simulering og til VIA (info som grunnlag)."],
+  takeaway:"ICE komprimerer uker til timer ved å samle fagene rundt modellen og beslutte i sanntid." },
+
+{ no:4,key:"ppm-p",color:"#0e7d73",day:"Onsdag 05.08 · Dag 2",time:"13:00–16:00",
+  tema:"PPM – prosessmapping",el:"Plenum: «PPM Prosessmapping» (Martin Fischer)",
+  goal:"Kunne legge og forbedre en prosess, definere målinger (produktivitet og kvalitet), og plassere kø og lager for å tydeliggjøre Work in Process (WIP).",
+  fischer:["Et prosjekt er et produksjonssystem – ikke bare en liste med oppgaver.","En prosess har steg, kø, lager (WIP) og flyt.","Heathrow-armering: ledetid 30→5 dager ved å styre flyten.","Du begynner å se hvor sløsing og venting gjemmer seg."],
+  connect:"Kartlegger en beslutnings-/produksjonsprosess i konteksten – grunnlaget for variabilitets-sesjonen etterpå.",
+  oppgaver:[
+    {n:1,type:"refleksjon",q:"Hvor i konteksten oppstår venting (kø), og hvor hoper ferdig arbeid seg opp (lager/WIP)?",how:"Diskuter og gi to konkrete eksempler på hver. Skriv dem ned før dere bygger kartet.",svar:["Kø: tegninger som venter på godkjenning; svar som venter på avklaring","Lager (WIP): ferdig prosjektert som venter på byggestart"]},
+    {n:2,type:"praktisk",q:"Hvordan ser produksjons-/beslutningsprosessen ut, steg for steg?",how:"Bygg prosesskartet fysisk: legg ett kort per steg i svømmebaner (én rad per aktør). Bruk symbolene firkant = arbeidsoppgave, trekant = kø, sylinder = lager, pil = flyt. Flytt på kortene til hele gruppa er enig.",svar:["Prosesskart med swimlanes per aktør (byggherre, ARK, RIB, RIV, PL)","Kø og lager skal være synlige som egne symboler mellom arbeidsoppgavene"]},
+    {n:3,type:"analyse",q:"Hvordan kan dere måle prosessen – både hvor effektiv og hvor god den er?",how:"Definer én effektivitetsmåling og én kvalitetsmåling for hele prosessen.",svar:["Effektivitet: tid fra bestilling til endelig beslutning (antall dager)","Kvalitet: står beslutningen seg en måned etter at den er tatt? (ja/nei)"]},
+    {n:4,type:"praktisk",q:"(Om gruppen har tid) Hvordan kan dere korte ned gjennomløpstiden?",how:"Flytt på kortene: fjern en kø, slå sammen steg eller endre rekkefølge. Lag en optimalisert versjon av prosesskartet ved siden av den første.",svar:["Færre køer og mindre WIP gir kortere og mer forutsigbar gjennomløpstid"]}
+  ],
+  reflect:["Hvor er den største køen eller sløsingen i prosessen?","Hvilken kontrollerbar faktor gir størst effekt på flyten?","Hva ville en kvalitetsmåling avslørt underveis?"],
+  facilitate:["Få fram skillet flyteffektivitet vs. ressurseffektivitet.","Sikre at køer/lager synliggjøres – det er ofte usynlig sløsing.","Knytt målingene konkret til stegene i prosessen."],
+  awareness:"Flyt og variabilitet er noe man kan designe og styre – ikke en fast Gantt-liste.",
+  material:["Valgt kontekst","Prosesskart-mal med symboler","Heathrow-armeringsprosess som eksempel"],
+  mentorTips:["Hjelp dem å se køene – de overser nesten alltid venting og lager.","Utfordre «alle må være travle»-tankegangen tidlig.","Pass på at målinger kobles til konkrete steg, ikke generelle ønsker.","Bruk armeringseksempelet som mal når en gruppe står fast."],
+  takeaway:"Prosjektet er et produksjonssystem du kan designe – styr flyten, ikke bare oppgavene." },
+
+{ no:5,key:"ppm-v",color:"#b5610a",day:"Torsdag 06.08 · Dag 3",time:"09:00–12:00",
+  tema:"PPM – variabilitet",el:"Plenum: «PPM Variabilitet» (Martin Fischer)",
+  goal:"Erfare hvordan man reduserer variabilitet og gjør prosessen mer forutsigbar, og hvordan buffer, batch og pull påvirker flyten.",
+  fischer:["Variabilitet er fienden til flyt; den kaskaderer gjennom avhengige steg.","Selv «gjennomsnittlig» fagytelse gir dårlig systemytelse uten koordinering (Parade of Trades).","Buffer, batchstørrelse og pull/push demper eller forsterker variabilitet.","Henger sammen med Kniberg (Push vs Pull) fra kvelden før."],
+  connect:"Tar prosesskartet fra forrige sesjon og reduserer variabiliteten i det.",
+  oppgaver:[
+    {n:1,type:"praktisk",q:"Hva skjer med flyten når variabiliteten er stor? (Terningspillet)",how:"Spill terningspillet (Capacity utilization) i gruppa: kjør én runde med høy variabilitet og store batcher. Mål gjennomløp og kølengde, og noter tallene.",svar:["Store svingninger gir lange køer og lav, uforutsigbar gjennomstrømning","«Alle travle» betyr ikke at arbeidet flyter"]},
+    {n:2,type:"praktisk",q:"Hva er forskjellen på push og pull? (Lego-flyspillet – eller Kniberg-filmen)",how:"Alt. A – Lego-flyspillet: bygg fly først i store partier (push), så ett om gangen på trekk (pull). Sammenlign hvor raskt ferdige fly kommer ut og hvor mye «lager» som ligger mellom stasjonene. Alt. B – raskere: se Henrik Kniberg-filmen om Push vs Pull, og reflekter i gruppa etterpå.",svar:["Push fyller systemet med arbeid ingen er klare til å ta imot → køer","Pull slipper arbeid løs når neste steg er klart → jevnere flyt, mindre lager","Film (alternativ): https://www.youtube.com/watch?v=CostXs2p6r0"]},
+    {n:3,type:"refleksjon",q:"Hva lærte øvelsene dere – og hvor kjenner dere det igjen i konteksten?",how:"Diskuter: hva skjedde med ventetid og lager da dere gikk fra store til små batcher / fra push til pull? Knytt det til konkrete situasjoner i prosjektet.",svar:["Mindre batch og pull gir kortere ventetid og mindre WIP","Variabilitet rammer hele systemet, ikke bare ett fag"]},
+    {n:4,type:"praktisk",q:"Hvordan kan dere dempe variabiliteten i prosessen fra forrige sesjon?",how:"Hent fram prosesskartet fra PPM-prosess. Tegn/legg inn hvor dere vil ha buffer eller endre batchstørrelse, marker endringene, og definer målinger per VDC-element.",svar:["Buffer: nok ressurser/underlag klart før ICE-sesjonen; beslutningstaker til stede","Tiltak via ICE (standardisert agenda), VIA (alt i én modell), PPM (definert beslutningsprosess)","Tabell: VDC-element → produksjonsmåling → verdi → målsetting"]}
+  ],
+  reflect:["Hva skjedde da dere reduserte batch eller innførte buffer/pull?","Hvor i egne prosjekter kjenner dere igjen denne variabiliteten?","Hva er den billigste måten å dempe variabilitet på?"],
+  facilitate:["Få fram flyteffektivitet vs. ressurseffektivitet med tall fra spillet.","Gjør Littles lov intuitiv (kø, gjennomstrømning, ventetid henger sammen).","Koble opplevelsen til reelle situasjoner i prosjektering/byggeplass."],
+  awareness:"At «alle travle» ikke er det samme som god flyt – og at variabilitet rammer hele systemet.",
+  material:["Prosesskart fra PPM-prosess","Terningspill (Capacity utilization)","Kniberg Push/Pull-video"],
+  mentorTips:["La spillet snakke – ikke foreles; trekk innsikten ut etterpå.","Sørg for at begge runder måles, så forskjellen blir tydelig.","Koble følelsen i spillet til ekte erfaring fra prosjekt.","Bruk energien (SPGR: Omsorg) – dette er en leken sesjon."],
+  takeaway:"Reduser variabilitet og styr flyt – ikke bare hold alle opptatt." },
+
+{ no:6,key:"via",color:"#5d3fa3",day:"Torsdag 06.08 · Dag 3",time:"13:00–16:00",
+  tema:"VIA – informasjon du kan stole på",el:"Plenum: «VIA» (Martin Fischer)",
+  goal:"Forstå hvordan en «Master BIM» og VIA (Visualisering, Informasjonsintegrasjon, Automatisering) skaper gjenbruk, konsekvent beslutningsstøtte og kontinuerlig læring fra prosjekt til prosjekt.",
+  fischer:["VIA = de tre bruksområdene for BIM/informasjon.","Uten god informasjon mangler du «certainty of product».","Informasjon vurderes etter beslutningene den muliggjør – ikke modelldetalj.","FREYR: konkrete VIA-målinger (maskiner i VIA > 95 %)."],
+  connect:"Løfter blikket fra ett prosjekt til gjenbruk på tvers – og peker framover mot implementering i egne prosjekter.",
+  oppgaver:[
+    {n:1,type:"praktisk",q:"Hvilken informasjon bør visualiseres, integreres og automatiseres i en «Master BIM» – for tre bruksområder (1: før oppstart, 2: underveis, 3: etter bygging)?",how:"Fyll ut tabell a på storark/mal: tre rader (bruksområde 1–3) × tre kolonner (Visualiseres · Integreres · Automatiseres). Skriv stikkord i hver celle.",svar:["Bruksområde 1: tomtutforming/kostnad/klima visualiseres; integreres med kalkyle","Bruksområde 2: kostnadsanalyse av endringer; mot kostnadsdatabase","Bruksområde 3: sammenligne mot byggd; automatisk oppdatert CO₂-verdi"]},
+    {n:2,type:"analyse",q:"Hvor kommer informasjonen fra, eller hvordan måler dere effekten? (Velg tabell b eller c)",how:"b) Skill hva BIM gir direkte vs. hva som hentes fra annen database (for V, I og A). c) Definer ett effektmål for hver av V, I og A.",svar:["b) Tydeliggjør hva som hentes direkte fra modellen vs. eksterne kilder","c) Effektmål: spart tid, færre feil, raskere/sikrere beslutning"]},
+    {n:3,type:"refleksjon",q:"Hvilken verdi kan VIA gi i deres egne prosjekter, og hvor vil dere starte?",how:"Diskuter konkret: hvilke oppgaver dere gjør i dag kunne VIA forbedret? Velg ett realistisk startpunkt.",svar:["Visualisere og dokumentere byggbarhet","Forenkle tverrfaglig tilgang til god informasjon; alternativvurdering mot kunde","Hente mengder; visualisere budsjett; kalkylemodeller"]}
+  ],
+  reflect:["Hvor jobber vi for informasjonen i stedet for at den jobber for oss?","Hvilken automatisering ville spart mest manuelt arbeid?","Gir informasjonen et godt nok grunnlag for beslutninger (kobling til ICE)?"],
+  facilitate:["Sikre at alle tre (V, I, A) blir berørt.","Hold fokus på «certainty of product» og beslutningene info muliggjør.","Knytt VIA til ICE: god informasjon er drivstoffet for gode beslutninger."],
+  awareness:"BIM er et middel, ikke et mål – en modell ingen beslutter ut fra, skaper ingen verdi.",
+  material:["Valgt kontekst","FREYR VIA-målinger som eksempel","VIA-triade fra forkurset","Tabell-mal (a/b/c)"],
+  mentorTips:["Hold fokus på beslutningene info muliggjør – ikke modelldetaljer.","Sikre at alle tre (V, I, A) berøres; grupper hopper ofte over automatisering.","Koble eksplisitt tilbake til ICE: info → beslutning.","Pek framover mot implementering: hvilken info finnes i egne prosjekter?"],
+  takeaway:"God informasjon er drivstoffet for gode beslutninger – VIA gir sikkerhet om produktet." }
+];
+
+/* ============================ ICONS ============================ */
+function IC(n){const m={
+  present:'<path d="M3 4h18v11H3z"/><path d="M12 15v5M8 20h8"/>',
+  group:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 19v-1a4 4 0 014-4h4a4 4 0 014 4v1"/><path d="M16 14a3 3 0 013 3v1"/>',
+  chat:'<path d="M21 15a2 2 0 01-2 2H8l-4 4V5a2 2 0 012-2h13a2 2 0 012 2z"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>',
+  task:'<path d="M9 11l3 3 8-8"/><path d="M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h11"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0012 2z"/>',
+  link:'<path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1.5-1.5"/>',
+  star:'<path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9 6.7 19.2l1-5.8L3.5 9.2l5.9-.9z"/>',
+  flag:'<path d="M4 22V4s2-1 5-1 5 2 8 2 4-1 4-1v11s-1 1-4 1-5-2-8-2-5 1-5 1z"/>',
+  box:'<path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/>',
+  clip:'<rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3a1 1 0 011-1h4a1 1 0 011 1v1"/><path d="M9 10l2 2 4-4"/>',
+  balance:'<path d="M12 3v18M5 21h14M7 7l-4 7a4 4 0 008 0L7 7zM17 7l-4 7a4 4 0 008 0l-4-7zM5 7h14"/>',
+  rocket:'<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2"/><path d="M14 4c3 0 6 3 6 6 0 4-5 9-9 11l-4-4C9 13 10 4 14 4z"/><circle cx="14.5" cy="9.5" r="1.5"/>',
+  shield:'<path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M16 8l-2.5 5.5L8 16l2.5-5.5z"/>',
+  route:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3 3 0 000-6H9a3 3 0 010-6h6.5"/>',
+  hand:'<path d="M18 11V6a2 2 0 00-4 0M14 10V4a2 2 0 00-4 0v6M10 10.5V6a2 2 0 00-4 0v8a8 8 0 008 8 8 8 0 008-8v-3a2 2 0 00-4 0"/>',
+  spark:'<path d="M12 2v6m0 8v6M2 12h6m8 0h6M5 5l4 4m6 6l4 4M5 19l4-4m6-6l4-4"/>',
+  layers:'<path d="M12 2l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  grow:'<path d="M3 17l5-5 4 4 8-8"/><path d="M16 8h5v5"/>',
+  book:'<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M19 3v18"/>',
+  building:'<rect x="4" y="2" width="16" height="20" rx="1"/><path d="M8 6h2M14 6h2M8 10h2M14 10h2M8 14h2M14 14h2M10 22v-4h4v4"/>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+(m[n]||m.star)+'</svg>';
+}
+
+/* ============================ ENGINE ============================ */
+let VIEW="oversikt", SUB=1, ROLE="student";
+const TABS=[
+  ["oversikt","flag","Oversikt","both"],["introuka","book","Introuka","both"],["struktur","layers","Struktur","both"],
+  ["kjoreplan","route","Kjøreplan","mentor"],["oppgaver","list","Oppgaver","both"],["kontekster","building","Kontekster","both"],
+  ["fasilitator","compass","Fasilitatorpakke","mentor"],["impl","rocket","Implementering","both"]
+];
+function allowed(v){const t=TABS.find(x=>x[0]===v);return !t||t[3]==="both"||t[3]===ROLE;}
+function tabs(){
+  document.getElementById("tabs").innerHTML=TABS.filter(t=>t[3]==="both"||t[3]===ROLE).map(([v,ic,l])=>'<button class="tab'+(VIEW===v?" on":"")+'" onclick="go(\''+v+'\')">'+IC(ic)+l+'</button>').join("");
+}
+function setRole(r){ROLE=r;document.querySelectorAll("#rolesw button").forEach(b=>b.classList.toggle("on",b.dataset.r===r));if(!allowed(VIEW))VIEW="oversikt";tabs();render();window.scrollTo({top:0,behavior:"smooth"});}
+function go(v){VIEW=v;tabs();render();window.scrollTo({top:0,behavior:"smooth"});}
+function setSub(n){SUB=n;render();window.scrollTo({top:0,behavior:"smooth"});}
+
+/* ---- persistence + interactive state ---- */
+const LS="vdc_introuka_v1";
+let STORE={ctx:{},answers:{},notes:{}};
+function loadStore(){try{const d=JSON.parse(localStorage.getItem(LS));if(d)STORE=Object.assign({ctx:{},answers:{},notes:{}},d);}catch(e){}}
+function saveStore(){try{localStorage.setItem(LS,JSON.stringify(STORE));}catch(e){}}
+const NOTECOLORS=["#ffe27a","#bce8a4","#f8b7c5","#a9d6f2","#ffcf9e","#d9c2f0"];
+let NOTECOLOR=NOTECOLORS[0];
+function curCtx(){return (STORE.ctx&&STORE.ctx[SUB])||{};}
+function ctxLabel(){const c=curCtx();if(c.sel==="own")return c.own&&c.own.trim()?c.own:"Egen case fra arbeidsgruppa";if(c.sel!=null&&c.sel!=="own"&&KONTEKST[c.sel])return KONTEKST[c.sel].t;return null;}
+function ctxBar(){
+  const c=curCtx();
+  let opts='<option value="">– velg kontekst –</option>';
+  KONTEKST.forEach((k,i)=>{opts+='<option value="'+i+'"'+(c.sel==i?' selected':'')+'>'+k.t+' · '+k.sektor+'</option>';});
+  opts+='<option value="own"'+(c.sel==="own"?' selected':'')+'>Egen case fra arbeidsgruppa …</option>';
+  let h='<div class="ctxbar"><div class="cth">'+IC("building")+'Velg kontekst – den fylles automatisk inn på alle oppgavene under</div>';
+  h+='<div class="ctxrow"><select id="ctxSel">'+opts+'</select>';
+  if(c.sel==="own")h+='<input id="ctxOwn" placeholder="Skriv kort hva caset handler om …" value="'+((c.own||"").replace(/"/g,"&quot;"))+'">';
+  h+='</div>';
+  const lab=ctxLabel(),k=(c.sel!=null&&c.sel!=="own")?KONTEKST[c.sel]:null;
+  if(lab)h+='<div class="ctx-chosen"><b>Valgt kontekst:</b> '+lab+(k?'. '+k.s:'')+(k?'<div class="ct-tags"><span>'+k.sektor+'</span><span>'+k.fase+'</span></div>':'')+'</div>';
+  else h+='<div class="ctx-none">Ingen kontekst valgt ennå. Se hele biblioteket under <b>Kontekster</b>.</div>';
+  return h+'</div>';
+}
+function ctxChip(){const lab=ctxLabel();return lab?'<div class="ctx-chip">'+IC("building")+'Kontekst: <span class="ctx-chip-val">'+lab+'</span></div>':'';}
+function updateChips(){const lab=ctxLabel()||"–";document.querySelectorAll(".ctx-chip-val").forEach(e=>e.textContent=lab);}
+
+function bindOppgaver(){
+  const sel=document.getElementById("ctxSel");
+  if(sel)sel.onchange=()=>{const v=sel.value;STORE.ctx[SUB]=Object.assign({},STORE.ctx[SUB],{sel:(v===""?null:(v==="own"?"own":parseInt(v)))});saveStore();render();};
+  const own=document.getElementById("ctxOwn");
+  if(own)own.oninput=()=>{STORE.ctx[SUB]=Object.assign({},STORE.ctx[SUB],{sel:"own",own:own.value});saveStore();updateChips();};
+  document.querySelectorAll("textarea[data-ans]").forEach(t=>{t.value=STORE.answers[t.dataset.ans]||"";t.oninput=()=>{STORE.answers[t.dataset.ans]=t.value;saveStore();};});
+  initBoard();
+}
+function initBoard(){
+  const board=document.getElementById("board");if(!board)return;
+  const key="s"+SUB;STORE.notes[key]=STORE.notes[key]||[];
+  const hint=document.getElementById("bhint");
+  function draw(){board.querySelectorAll(".note").forEach(n=>n.remove());const arr=STORE.notes[key];if(hint)hint.style.display=arr.length?"none":"grid";arr.forEach(n=>board.appendChild(makeNote(n)));}
+  function makeNote(n){
+    const el=document.createElement("div");el.className="note";el.style.left=n.x+"px";el.style.top=n.y+"px";el.style.background=n.color;el.dataset.id=n.id;
+    el.innerHTML='<div class="nhead"><span class="grip">⠿⠿</span><span class="ndel" title="Slett">×</span></div><div class="ntext" contenteditable></div>';
+    const text=el.querySelector(".ntext");text.innerHTML=n.text||"";
+    text.oninput=()=>{n.text=text.innerHTML;saveStore();};
+    el.querySelector(".ndel").onclick=()=>{STORE.notes[key]=STORE.notes[key].filter(x=>x.id!==n.id);saveStore();draw();};
+    const head=el.querySelector(".nhead");
+    head.addEventListener("pointerdown",e=>{if(e.target.classList.contains("ndel"))return;e.preventDefault();
+      const rect=board.getBoundingClientRect(),ox=e.clientX-rect.left-n.x,oy=e.clientY-rect.top-n.y;el.style.zIndex=20;
+      function mv(ev){let nx=ev.clientX-rect.left-ox,ny=ev.clientY-rect.top-oy;nx=Math.max(0,Math.min(nx,board.clientWidth-el.offsetWidth));ny=Math.max(0,Math.min(ny,board.clientHeight-el.offsetHeight));n.x=Math.round(nx);n.y=Math.round(ny);el.style.left=n.x+"px";el.style.top=n.y+"px";}
+      function up(){window.removeEventListener("pointermove",mv);window.removeEventListener("pointerup",up);el.style.zIndex="";saveStore();}
+      window.addEventListener("pointermove",mv);window.addEventListener("pointerup",up);
+    });
+    return el;
+  }
+  const add=document.getElementById("addNote");if(add)add.onclick=()=>{const arr=STORE.notes[key];const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);arr.push({id,x:24+(arr.length%6)*22,y:24+(arr.length%6)*18,text:"",color:NOTECOLOR});saveStore();draw();};
+  const clr=document.getElementById("clearBoard");if(clr)clr.onclick=()=>{if(STORE.notes[key].length&&confirm("Tøm tavla for denne sesjonen?")){STORE.notes[key]=[];saveStore();draw();}};
+  document.querySelectorAll(".swatch").forEach(sw=>{sw.onclick=()=>{NOTECOLOR=sw.dataset.c;document.querySelectorAll(".swatch").forEach(x=>x.classList.toggle("on",x===sw));};});
+  draw();
+}
+function render(){
+  const el=document.getElementById("view");
+  const map={oversikt:overview,introuka:introukaView,struktur:strukturView,kjoreplan:kjoreplanView,oppgaver:oppgaverView,kontekster:kontekstView,fasilitator:fasilitator,impl:implementering};
+  el.innerHTML=(map[VIEW]||overview)();
+  if(VIEW==="oppgaver")bindOppgaver();
+}
+function subnav(){
+  return '<div class="subnav">'+SESS.map(s=>'<button class="spill'+(SUB===s.no?" on":"")+'" onclick="setSub('+s.no+')" style="'+(SUB===s.no?'background:'+s.color:'')+'"><span class="d" style="background:'+s.color+'"></span>'+s.no+' · '+s.tema.split(" – ")[0].split(" (")[0]+'</button>').join("")+'</div>';
+}
+function block(color,ic,phase,title,role,body){
+  return '<div class="block"><div class="bh"><div class="bi" style="background:'+color+'">'+IC(ic)+'</div><div><div class="phase-lbl">'+phase+'</div><h3>'+title+'</h3></div>'+(role?'<div class="time">'+role+'</div>':'')+'</div><div class="bb">'+body+'</div></div>';
+}
+function sec2(ic,lbl,title,sub,body){return '<div class="sec2"><div class="lbl">'+IC(ic)+lbl+'</div><h2>'+title+'</h2>'+(sub?'<div class="s2sub">'+sub+'</div>':'')+body+'</div>';}
+function mini(ic,h,p){return '<div class="mini"><div class="mi">'+IC(ic)+'</div><h4>'+h+'</h4><p>'+p+'</p></div>';}
+function runBlock(color,title,role,run){
+  let r='<div class="run">';
+  run.forEach(s=>{r+='<div class="rline"><div class="rtime"><div class="tm2">'+s.time+'</div><span class="met">'+s.met+'</span></div><div class="rbody"><h6>'+s.h+'</h6><p>'+s.p+'</p><div class="ment">'+IC("compass")+'<span>'+s.ment+'</span></div></div></div>';});
+  return block(color,"route",title,role,r+'</div>');
+}
+function ddwBlock(color,title,dd,exLabel,exItems){
+  function col(cls,ic,lbl,items,el,ei){let c='<div class="col '+cls+'"><div class="ch">'+IC(ic)+lbl+'</div><ul>'+items.map(x=>'<li>'+x+'</li>').join("")+'</ul>';if(ei&&ei.length)c+='<div class="extra"><div class="et">'+el+'</div><ul>'+ei.map(x=>'<li>'+x+'</li>').join("")+'</ul></div>';return c+'</div>';}
+  return block(color,"hand",title,"",'<div class="ddw">'+col("do","task","Gjør",dd.do)+col("dont","q","Ikke gjør",dd.dont)+col("watch","eye","Følg med på",dd.watch,exLabel,exItems)+'</div>');
+}
+
+/* ---- week data ---- */
+function weekData(){return [
+  {dd:"MANDAG 03.08",dn:"Mentordag",slots:[{cls:"muted2",st:"",t:"Kl. 10–18 · mentorforberedelse"},{cls:"muted2",t:"Felles middag 19:00"}]},
+  {dd:"TIRSDAG 04.08",dn:"Dag 1",slots:[{ws:1},{cls:"lunch",t:"FELLES LUNSJ"},{ws:2},{cls:"muted2",st:"Kveld",t:"Simulering av ICE-sesjon"}]},
+  {dd:"ONSDAG 05.08",dn:"Dag 2",slots:[{ws:3},{cls:"lunch",t:"FELLES LUNSJ"},{ws:4},{cls:"muted2",st:"Kveld",t:"Variabilitet + Kniberg + terningspill"}]},
+  {dd:"TORSDAG 06.08",dn:"Dag 3",slots:[{ws:5},{cls:"lunch",t:"FELLES LUNSJ"},{ws:6},{cls:"muted2",st:"Kveld",t:"Forberedelse: implementering"}]},
+  {dd:"FREDAG 07.08",dn:"Dag 4",slots:[{cls:"muted2",st:"09–12",t:"Implementeringsplan (Fischer) + arbeid"},{cls:"lunch",t:"FELLES LUNSJ"},{cls:"muted2",st:"13–15",t:"Innsjekk + oppsummering"}]}
+];}
+
+/* ============================ VIEWS ============================ */
+function overview(){
+  let h='<div class="eyebrow">'+IC("flag")+' Introuka · 6 workshops</div><h1>Opplegg for introuka</h1>';
+  h+=roleBar();
+  h+='<p class="lead">Seks tre-timers sesjoner over tre dager. Hver sesjon følger samme rytme: Martin Fischer setter standarden i plenum, arbeidsgruppene trener på en valgt kontekst, og mentorteamet reflekterer på tvers.</p>';
+  h+='<div class="week">';
+  weekData().forEach(d=>{h+='<div class="day"><div class="dh"><div class="dd">'+d.dd+'</div><div class="dn">'+d.dn+'</div></div><div class="slots">';
+    d.slots.forEach(sl=>{if(sl.ws){const s=SESS.find(x=>x.no===sl.ws);h+='<div class="slot ws" style="background:'+s.color+'" onclick="SUB='+s.no+';go(\'oppgaver\')"><div class="st">'+s.time+'</div>'+s.no+' · '+s.tema.split(" – ")[0].split(" (")[0]+'</div>';}else h+='<div class="slot '+(sl.cls||"")+'">'+(sl.st?'<div class="st">'+sl.st+'</div>':'')+sl.t+'</div>';});
+    h+='</div></div>';});
+  h+='</div>';
+  h+='<h2 class="sec">Finn fram</h2><div class="dims">'+[
+    ["introuka","book","Introuka","Hva hver temaintroduksjon inneholder, og hvordan de seks sesjonene henger sammen."],
+    ["struktur","layers","Struktur","Den pedagogiske oppbyggingen: faser, roller, arbeidsgrupper og den røde tråden."],
+    ["kjoreplan","route","Kjøreplan","Minutt-for-minutt kjøreguide for Workshop 1 og 2 – med mentorens gjør / ikke gjør / følg med på."],
+    ["oppgaver","list","Oppgaver","De konkrete oppgavene per sesjon"+(ROLE==="mentor"?", med eksempelsvar og fasilitatornotater.":". Hver arbeidsgruppe jobber etter samme ark med sin valgte kontekst.")],
+    ["kontekster","building","Kontekster","Generiske, typiske situasjoner gruppene kan velge fra – eller egen case fra arbeidsgruppa."],
+    ["fasilitator","compass","Fasilitatorpakke","Mentorenes verktøy: forberedelse, SPGR, endringsledelse og hele mentorlæringen."]
+  ].filter(d=>allowed(d[0])).map(([v,ic,t,p])=>'<div class="dim" onclick="go(\''+v+'\')"><div class="di">'+IC(ic)+'</div><h3>'+t+'</h3><p>'+p+'</p></div>').join("")+'</div>';
+  return h;
+}
+
+function introukaView(){
+  let h='<div class="eyebrow">'+IC("book")+' Introuka</div><h1>Introduksjonene og den røde tråden</h1>';
+  h+='<p class="lead">Martin Fischer setter standarden i plenum før hver workshop. Her er hva hver introduksjon dekker, læringsmålet for sesjonen, og hvordan de seks sesjonene bygger på hverandre.</p>';
+  h+=sec2("route","Sammenhengen","Slik henger de seks sesjonene sammen","Gruppa velger én kontekst og bærer den gjennom hele uka – akkurat som et ekte prosjekt utvikler seg fra mål til informasjon.",
+    '<div class="route">'+SESS.map((s,i)=>'<span class="rstep" style="border-color:'+s.color+';color:'+s.color+'">'+s.no+' · '+s.tema.split(" – ")[0].split(" (")[0]+'</span>'+(i<5?'<span class="rarr">→</span>':'')).join("")+'</div>');
+  SESS.forEach(s=>{
+    h+=block(s.color,"present","Sesjon "+s.no+" · "+s.day+" · "+s.time,s.tema,s.time,
+      '<div class="goal" style="background:'+s.color+'"><span class="gi">'+IC("target")+'</span><div><div class="gl">Læringsmål</div><p>'+s.goal+'</p></div></div>'+
+      '<h5>'+IC("bulb")+'Etter Fischers intro skal studentene forstå</h5><ul>'+s.fischer.map(x=>'<li>'+x+'</li>').join("")+'</ul>'+
+      '<div class="awareness" style="border-left-color:'+s.color+'"><b style="color:'+s.color+'">Henger sammen:</b> '+s.connect+'</div>');
+  });
+  return h;
+}
+
+function strukturView(){
+  let h='<div class="eyebrow">'+IC("layers")+' Struktur</div><h1>Slik er sesjonene bygd opp</h1>';
+  h+='<p class="lead">Samme pedagogiske rytme i alle seks sesjoner – fra felles standard, til trening i arbeidsgruppe, til refleksjon på tvers. Det gjør uka forutsigbar for både studenter og mentorer.</p>';
+  h+='<div class="anat"><h3>De tre fasene i hver 3-timers sesjon</h3><div class="sub">Tidsrammene er veiledende og gjentas i hver sesjon.</div><div class="phases">'+ANAT.map(p=>'<div class="phase '+p.cls+'"><div class="pi">'+IC(p.ic)+'</div><div class="pt">'+p.tag+'</div><h4>'+p.h+'</h4><p>'+p.p+'</p></div>').join("")+'</div></div>';
+  h+=sec2("group","Oppsett","Arbeidsgrupper og roller","Hvert mentorteam er 20 studenter, delt i fire arbeidsgrupper på fem. Faste roller gjør gruppearbeidet effektivt.",
+    '<div class="cardgrid">'+
+      mini("group","4 arbeidsgrupper á 5","Gruppene jobber parallelt på hver sin valgte kontekst. Mentor(ene) roterer mellom gruppene.")+
+      mini("flag","Leder","Styrer fremdriften i gruppa og passer på at alle oppgaver blir besvart.")+
+      mini("clip","Sekretær","Skriver ned svarene og lager det delbare bildet til workshop 2.")+
+      mini("compass","Tidtaker","Passer på klokka og holder gruppa innenfor tidsrammene.")+
+    '</div>');
+  h+=sec2("list","Arbeidsarket","Den faste flyten i hver workshop","Hvert arbeidsark følger samme struktur, så studentene kjenner seg igjen fra sesjon til sesjon.",
+    block("#00509E","route","Standard rekkefølge på arbeidsarket","",
+      '<div class="run">'+[
+        ["Oppstart med mentor","3 min","Mentor rammer oppgaven, læringsmål og hvordan gjennomføre."],
+        ["Kontekst","5 min","Gruppa velger og forankrer sin kontekst (fra biblioteket eller egen case)."],
+        ["Oppgave 1–5","~35 min","Gruppa løser oppgavene og noterer svar. «Egne notater» brukes underveis."],
+        ["Pause","–","Kort pause før deling."],
+        ["Presentasjon og refleksjon med mentor","30 min","Workshop 2: deling og refleksjon på tvers i mentorteamet."],
+        ["Oppsummering · Pluss/Delta","10 min","Hva var bra (Pluss), hva bør endres (Delta), og Key takeaways."],
+        ["Plenum deling","–","Deling og refleksjon fra VDC-økten på tvers av alle mentorteam."]
+      ].map(r=>'<div class="rline"><div class="rtime"><div class="tm2">'+r[1]+'</div></div><div class="rbody"><h6>'+r[0]+'</h6><p>'+r[2]+'</p></div></div>').join("")+'</div>'));
+  h+='<div class="link-fk">'+IC("route")+'<div>Vil du se minutt-for-minutt kjøring og mentorens rolle? Gå til <b>Kjøreplan</b>. De konkrete oppgavene ligger under <b>Oppgaver</b>.</div></div>';
+  return h;
+}
+
+function kjoreplanView(){
+  const s=SESS.find(x=>x.no===SUB);
+  let h='<div class="eyebrow">'+IC("route")+' Kjøreplan</div><h1>Kjøreguide for Workshop 1 og 2</h1>';
+  h+='<p class="lead">Minutt-for-minutt kjøring med metode per steg, og klart definert hva mentor skal gjøre, ikke gjøre og følge med på. Velg sesjon:</p>';
+  h+=subnav();
+  h+='<div class="goal" style="background:'+s.color+'"><span class="gi">'+IC("target")+'</span><div><div class="gl">Sesjon '+s.no+' · '+s.tema+'</div><p>'+s.goal+'</p></div></div>';
+  h+=runBlock(s.color,"Slik kjører du Workshop 1","60 min · arbeidsgrupper á 5",W1RUN);
+  h+=ddwBlock(s.color,"Mentor i Workshop 1",W1DD,"Følg spesielt med på her",s.mentorTips);
+  h+=runBlock(s.color,"Slik kjører du Workshop 2","50 min · mentorteam (4 grupper)",W2RUN);
+  h+=ddwBlock(s.color,"Mentor i Workshop 2",W2DD,"Sikre at dette tas opp her",s.facilitate);
+  h+='<div class="link-fk">'+IC("compass")+'<div>Trenger du å friske opp fasilitering, SPGR eller endringsledelse? Se <b>Fasilitatorpakken</b>.</div></div>';
+  return h;
+}
+
+function typeLbl(t){return {praktisk:"Praktisk øvelse",refleksjon:"Refleksjon",analyse:"Analyse"}[t]||"Oppgave";}
+function roleBar(){
+  return ROLE==="student"
+    ? '<div class="rolebar student">'+IC("group")+'<span><b>Studentvisning</b> – arbeidsarket arbeidsgruppa jobber etter. Bytt til <b>Mentor</b> øverst for fasilitering, eksempelsvar og det mentor må huske på.</span></div>'
+    : '<div class="rolebar mentor">'+IC("star")+'<span><b>Mentorvisning</b> – samme oppgaver som studentene, men med eksempelsvar/fasilitatornotater og det du skal sikre. Detaljert kjøring ligger i <b>Kjøreplan</b>.</span></div>';
+}
+function oppgaverView(){
+  const s=SESS.find(x=>x.no===SUB);
+  const isM=ROLE==="mentor";
+  let h='<div class="eyebrow">'+IC("list")+' Oppgaver</div><h1>Oppgaver per sesjon</h1>';
+  h+=roleBar();
+  h+='<p class="lead">'+(isM?"De konkrete oppgavene arbeidsgruppene jobber med – med eksempelsvar og fasilitatornotater. Velg sesjon:":"Arbeidsarket gruppa jobber etter. Velg kontekst øverst, fyll inn svarene deres, og bruk tavla nederst. Alt lagres automatisk. Velg sesjon:")+'</p>';
+  h+=subnav();
+  h+='<div class="goal" style="background:'+s.color+'"><span class="gi">'+IC("target")+'</span><div><div class="gl">Sesjon '+s.no+' · '+s.tema+'</div><p>'+s.goal+'</p></div></div>';
+  h+=ctxBar();
+  h+='<div class="wsh">'+IC("task")+'Workshop 1 · oppgaver <span style="font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0">· 60 min · arbeidsgruppe á 5</span></div>';
+  s.oppgaver.forEach(o=>{
+    h+='<div class="opg"><div class="oh"><div class="on" style="background:'+s.color+'">'+o.n+'</div><div style="flex:1">'+ctxChip()+'<div class="otype '+(o.type||"analyse")+'">'+typeLbl(o.type)+'</div><div class="oq">'+o.q+'</div></div></div>';
+    if(o.how)h+='<div class="how"><b>Slik jobber dere:</b> '+o.how+'</div>';
+    if(isM)h+='<div class="svar"><div class="sl">'+IC("bulb")+'Eksempelsvar / fasilitatornotat</div>'+(o.svar.length>1?'<ul>'+o.svar.map(x=>'<li>'+x+'</li>').join("")+'</ul>':'<p>'+o.svar[0]+'</p>')+'</div>';
+    else h+='<div class="afield"><div class="al">'+IC("clip")+'Deres svar</div><textarea data-ans="s'+s.no+'-o'+o.n+'" placeholder="Skriv svaret deres her …"></textarea></div>';
+    h+='</div>';
+  });
+  h+='<div class="awareness" style="border-left-color:'+s.color+'"><b style="color:'+s.color+'">'+(isM?"Awareness studentene skal sitte igjen med:":"Dette skal dere sitte igjen med:")+'</b> '+s.awareness+'</div>';
+  h+='<div class="wsh">'+IC("chat")+'Workshop 2 · deling og refleksjon <span style="font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0">· 50 min · mentorteam</span></div>';
+  if(isM){
+    h+=block(s.color,"chat","Presentasjon og refleksjon med mentor","Mentorteamet (4 grupper)","30 min",
+      '<h5>'+IC("group")+'Deling</h5><p>Hver gruppe deler leveransen (2–3 min). Gruppene har jobbet med ulike kontekster – det er selve poenget.</p>'+
+      '<h5>'+IC("link")+'Refleksjonsspørsmål</h5><ul>'+s.reflect.map(x=>'<li class="q">'+x+'</li>').join("")+'</ul>'+
+      '<h5>'+IC("flag")+'Mentor sikrer at dette tas opp</h5><ul>'+s.facilitate.map(x=>'<li class="chk">'+x+'</li>').join("")+'</ul>'+
+      '<div class="awareness">Avsluttes med <b>Pluss/Delta</b> og <b>Key takeaways</b> i mentorgruppen, før plenumsdeling på tvers av alle mentorteam.</div>');
+  }else{
+    h+='<div class="block"><div class="bh"><div class="bi" style="background:'+s.color+'">'+IC("chat")+'</div><div><div class="phase-lbl">Hele mentorteamet · 30 min</div><h3>Presentasjon og refleksjon med mentor</h3></div></div><div class="bb">'+
+      '<h5>'+IC("group")+'Slik foregår det</h5><p>Hver gruppe presenterer leveransen sin (2–3 min). Dere har jobbet med ulike kontekster – lytt etter hva som er likt og ulikt.</p>'+
+      '<h5>'+IC("link")+'Skriv ned refleksjonene deres</h5>'+
+      s.reflect.map((x,i)=>'<div class="afield"><div class="al">'+IC("chat")+x+'</div><textarea data-ans="s'+s.no+'-r'+i+'" placeholder="Deres refleksjon …"></textarea></div>').join("")+
+      '<div class="awareness">Økten avsluttes med <b>Pluss/Delta</b> og <b>Key takeaways</b>, før felles plenumsdeling.</div></div></div>';
+    // post-it board
+    h+='<div class="wsh">'+IC("spark")+'Gruppas tavle · post-its</div>';
+    h+='<div class="board-wrap"><div class="board-tools"><button class="nbtn" id="addNote">'+IC("task")+'Ny lapp</button>'+
+      '<div class="swatches">'+NOTECOLORS.map((c,i)=>'<span class="swatch'+(i===0?' on':'')+'" data-c="'+c+'" style="background:'+c+'"></span>').join("")+'</div>'+
+      '<button class="nbtn ghost" id="clearBoard" style="margin-left:auto">Tøm tavla</button></div>'+
+      '<div class="board" id="board"><div class="bhint" id="bhint">Klikk «Ny lapp» for å henge opp en post-it. Dra i topplinjen for å flytte, klikk i lappen for å skrive.</div></div></div>';
+  }
+  h+='<div class="takeaway"><span class="ti">'+IC("star")+'</span><div><div class="tl">Key takeaway</div><p>'+s.takeaway+'</p></div></div>';
+  if(isM)h+='<div class="link-fk">'+IC("route")+'<div>Hvordan kjøre dette steg for steg? Se <b>Kjøreplan</b> for sesjon '+s.no+'.</div></div>';
+  return h;
+}
+
+function kontekstView(){
+  let h='<div class="eyebrow">'+IC("building")+' Kontekster</div><h1>Velg en situasjon å jobbe med</h1>';
+  h+='<p class="lead">Hver arbeidsgruppe velger én typisk, utfordrende situasjon fra lista under – innen bygg, anlegg, infrastruktur eller industri, i ulike faser. Finner dere ikke noe relevant, lar dere én i gruppa fortelle om en reell case fra eget prosjekt og bruker den. Konteksten bæres gjennom alle seks sesjonene.</p>';
+  h+='<div class="kgrid">';
+  KONTEKST.forEach(k=>{h+='<div class="kcard"><div class="ktags"><span class="ktag">'+k.sektor+'</span><span class="ktag fase">'+k.fase+'</span></div><h4>'+k.t+'</h4><p>'+k.s+'</p><div class="chall">'+IC("flag")+' '+k.c+'</div></div>';});
+  h+='<div class="kcard own"><div class="ktags"><span class="ktag" style="background:var(--cardinal-soft);color:var(--cardinal)">Egen case</span></div><h4>Egen situasjon fra arbeidsgruppa</h4><p>Finner dere ikke en passende kontekst? La én i gruppa fortelle om en reell, utfordrende situasjon fra eget prosjekt – og bruk den gjennom sesjonene.</p><div class="chall" style="background:var(--cardinal-soft);color:var(--cardinal-dark)">'+IC("group")+' Velg noe konkret nok til at dere kan sette mål, måle og finne tiltak.</div></div>';
+  h+='</div>';
+  h+='<div class="link-fk" style="margin-top:22px">'+IC("list")+'<div>Når konteksten er valgt: gå til <b>Oppgaver</b> og jobb dere gjennom sesjonens oppgaver med den valgte situasjonen som utgangspunkt.</div></div>';
+  return h;
+}
+
+/* ---- facilitator package (whole mentor journey) ---- */
+function fasilitator(){
+  const C="#8C1515";
+  let h='<div class="eyebrow">'+IC("compass")+' For mentorene</div><h1>Fasilitatorpakke</h1>';
+  h+='<p class="lead">Et reelt verktøy for å komme best mulig forberedt til introuka – og en oversikt over hele mentorlæringen. Du har to oppgaver: hjelpe studentene å lære, og lede VDC inn i egne prosjekter.</p>';
+
+  // mentor journey (BM6101 / erfaringsrapport)
+  h+=sec2("route","Helheten","Mentorens læringsreise",
+    "Mentorrollen din vokser i tre arenaer samtidig. Erfaringsrapporten (BM6101) ber deg reflektere over læring fra alle tre.",
+    '<div class="journey">'+
+      '<div class="jstep"><div class="jn" style="background:var(--ntnu)">1</div><h4>Fra VDC-opplæringen</h4><p>Du kjenner elementene – men «det er i kombinasjonen magien skjer». Repeter helheten, ikke bare delene.</p></div>'+
+      '<div class="jstep"><div class="jn" style="background:var(--cardinal)">2</div><h4>Fra veiledning av studenter</h4><p>Å multiplisere egen læring er vanskeligere enn å lære selv. Det krever gjensidig tillit for å bygge innflytelse.</p></div>'+
+      '<div class="jstep"><div class="jn" style="background:var(--green)">3</div><h4>Fra bruk i eget prosjekt</h4><p>Tydelige CO/PO skaper enhet; BIM + ICE gir raskere beslutninger. Det du lærer her, tar du med til studentene.</p></div>'+
+    '</div>');
+
+  // practical experiences from mentor background data
+  h+=sec2("bulb","Fra mentorer som har gått løpet","Praktiske grep og erfaringer",
+    "Sitater og innsikt fra tidligere mentorers erfaringsrapporter (BM6101). Bruk dem som påminnelser når du veileder.",
+    '<div class="cardgrid">'+
+      mini("spark","«I kombinasjonen skjer magien»","Enkeltelementene gir verdi hver for seg, men sammen forsterker de hverandre, skaper felles forståelse og øker eierskap. Repeter helheten, ikke bare delene.")+
+      mini("group","Å lære bort er vanskeligere enn å lære","«Å multiplisere egen læring er langt verre enn å innta lærdom selv.» Det krever gjensidig tillit å bygge innflytelse – invester i relasjonen først.")+
+      mini("target","Tydelige CO/PO skaper enhet","Godt kommuniserte mål ga klarhet og samlet kunde, byggeledelse og utførende. Bruk mye tid på å gjøre målene tydelige tidlig.")+
+      mini("eye","Synergiene i praksis","BIM + ICE → raskere og bedre beslutninger. 4D + ICE → visualisering ga færre misforståelser. 5D + BIM → endringer ga direkte utslag i kost og tid. Alt i skyen → sømløs informasjonsflyt.")+
+      mini("book","Repetisjon gjør deg trygg","Faglig repetisjon av eksempler og innhold var en stor bidragsyter for å lykkes som mentor. Kjenn eksemplene (Aurora, Heathrow, FREYR) godt nok til å bruke dem fritt.")+
+      mini("grow","Reflekter sammen med studentene","Studentene har sprikende forståelse – juster og utfordre tankesett sammen med dem, og les oppgavene deres som en kilde til egen læring.")+
+    '</div>');
+
+  // prep
+  h+=sec2("clip","Før introuka","Forbered deg","Gjør dette i god tid før mandag – mye av kvaliteten avgjøres av forarbeidet.",
+    block(C,"clip","Sjekkliste","",
+      '<ul>'+["Gjennomfør forkurset og mentor-modulene (BM6101) selv.","Les kartleggingen av dine egne studenter i admin-dashbordet: hvor står gruppen, og hva er svakeste område?","Bli kjent med de fire arbeidsgruppene og hvilke prosjekter studentene kommer fra.","Kjør en SPGR-kartlegging av mentorteamet for å forstå dynamikken.","Repeter de seks sesjonenes læringsmål og oppgaver; ha kontekster og maler klare.","Avklar rollefordeling hvis dere er flere mentorer.","Velg ditt eget prosjekt for implementeringsfasen – du jobber på to fronter."].map(x=>'<li class="chk">'+x+'</li>').join("")+'</ul>'));
+
+  // SPGR
+  const fns=[
+    {c:"#00509E",ic:"target",h:"Kontroll",p:"Struktur, mål og styring. For mye: rigid og lite kreativ."},
+    {c:"#2e7d57",ic:"hand",h:"Omsorg (Nurture)",p:"Relasjon, støtte og kreativitet. For lite: kald og utrygg gruppe."},
+    {c:"#B1040E",ic:"spark",h:"Opposisjon",p:"Kritikk og nytenkning. Krever psykologisk trygghet for å komme fram."},
+    {c:"#a86410",ic:"shield",h:"Avhengighet",p:"Lojalitet og aksept. For mye: ingen tør å si imot."}
+  ];
+  h+=sec2("balance","Teamverktøy","SPGR – les teamet ditt",
+    "SPGR (Systematizing Person-Group Relations), utviklet av Endre Sjøvold ved NTNU, kartlegger gruppedynamikk. De fire funksjonene må være i balanse for at teamet skal nå sitt potensial; målet er gruppemodenhet – at teamet kan veksle mellom funksjonene.",
+    '<div class="spgr">'+fns.map(f=>'<div class="fn" style="background:'+f.c+'"><div class="fh">'+IC(f.ic)+f.h+'</div><p>'+f.p+'</p></div>').join("")+'</div>'+
+    block(C,"compass","Bruk linsen i introuka","",
+      '<ul>'+["Mangler Opposisjon? Be eksplisitt om motforestillinger, og gjør det trygt.","For mye Kontroll? Gi de stille ordet, åpne for kreativitet (Omsorg).","For mye Avhengighet? Sett to grupper opp mot hverandre.","Lav energi? Styrk Omsorg – anerkjenn bidrag før du presser på oppgaven."].map(x=>'<li>'+x+'</li>').join("")+'</ul>'+
+      '<div class="srcnote">Kilde: Sjøvold, E. (2007), «Systematizing Person-Group Relations (SPGR)», Small Group Research. Brukes i NTNUs VDC-lederopplæring (BM6101).</div>'));
+
+  // change + team
+  h+=sec2("rocket","Ledelse","Endringsledelse og teamutvikling","Du er endringsleder og teamutvikler denne uka – det avgjør hvor mye læring som sitter.",
+    '<div class="cardgrid">'+
+      mini("grow","Du er endringsleder","Lippitt-Knoster: sørg for visjon, ferdigheter, insentiver, ressurser og plan. Mangler én, får du et bestemt symptom.")+
+      mini("shield","Psykologisk trygghet","Vis sårbarhet, belønn at problemer kommer fram, skill sak fra person. Forutsetningen for ekte refleksjon.")+
+      mini("spark","Kaossonen","«Læring skal smerte litt.» Hold gruppen trygt gjennom usikkerheten til ny innsikt.")+
+      mini("chat","Utviklingssamtale","Vurdering er en samtale om vei videre, ikke en karakter. Spør før du svarer.")+
+    '</div>');
+
+  // reflection tool (erfaringsrapport)
+  h+=sec2("book","Etter uka","Din erfaringsrapport – hva har du forbedret og lært?",
+    "Mentorlæringen avsluttes med en egen refleksjon (BM6101). Bruk den samme linsen på deg selv som du bruker på studentene.",
+    '<div class="cardgrid">'+
+      mini("bulb","Faglig læring","Hva forsto du dypere om VDC – særlig om hvordan elementene forsterker hverandre i kombinasjon?")+
+      mini("group","Personlig læring","Hva lærte du om å veilede, bygge tillit og multiplisere egen kunnskap til andre?")+
+      mini("task","Kontrollerbare faktorer","«Ting» du selv kan gjøre i egen virksomhet – konkrete tiltak du styrer.")+
+      mini("hand","Påvirkbare faktorer","«Ting» du kan få andre til å gjøre – der du må påvirke og lede endring.")+
+    '</div>'+
+    '<div class="link-fk">'+IC("star")+'<div><b>Egenvurdering (maks tre punkter):</b> Hva var mest nyttig for deg? Hva var mest nyttig for din virksomhet? Pluss/Delta av hele opplegget.</div></div>');
+
+  // principles
+  h+=sec2("hand","Hver dag","Fasiliteringsprinsipper","Fem prinsipper å ha med inn i hver sesjon.",
+    block(C,"hand","Mentorens fem","",
+      '<ul>'+["Spør før du svarer – åpne spørsmål gir dypere læring.","Tidsstyr hardt, og park det som ikke kan løses nå.","Gi de stilleste stemme – de sitter ofte med nøkkelinformasjonen.","Koble alltid tilbake til studentenes egne prosjekter.","Vær rollemodell: studentene kopierer det du gjør, ikke det du sier."].map(x=>'<li class="chk">'+x+'</li>').join("")+'</ul>'));
+
+  h+='<div class="link-fk">'+IC("route")+'<div>Sesjonsspesifikke fasilitatortips ligger i <b>Kjøreplan</b> under hver sesjons «Mentor i Workshop 1 / 2».</div></div>';
+  return h;
+}
+
+/* ---- implementation ---- */
+function implementering(){
+  const C="#00509E";
+  let h='<div class="eyebrow">'+IC("rocket")+' Neste fase</div><h1>Implementeringsfasen</h1>';
+  h+='<p class="lead">Introuka var trening. Nå skal studentene og mentorene sette det de har lært ut i virkelige prosjekter – det mest spennende og mest krevende steget.</p>';
+  h+=sec2("route","Veien videre","Fra introuka til effekt","Implementeringsfasen er broa mellom læring og resultat.",
+    '<div class="route"><span class="rstep">Introuka</span><span class="rarr">→</span><span class="rstep now">Implementering i eget prosjekt</span><span class="rarr">→</span><span class="rstep">Midtveissamling 1 & 2</span><span class="rarr">→</span><span class="rstep">IE-samling</span></div>');
+  h+=block(C,"present","Torsdag 06.08 · avslutning","Martin Fischer introduserer implementeringsfasen","plenum",
+    '<h5>'+IC("bulb")+'Dette skal studentene forstå</h5><ul>'+["Introuka ga forståelse og trening – nå handler det om å anvende og endre i et ekte prosjekt.","Implementering er et eget fag: det skjer ikke av seg selv fordi man forstår VDC.","Det vil møte motstand, kultur og virkelighet – og det er normalt.","Velg ett avgrenset, realistisk første steg (en tidlig seier) framfor å endre alt."].map(x=>'<li>'+x+'</li>').join("")+'</ul>'+
+    '<div class="awareness">Overgangen: fra «jeg forstår VDC» til «jeg leder VDC inn i prosjektet mitt».</div>');
+  h+=block(C,"clip","Fredag 07.08 · 09–12","Implementeringsplanen","grupper og individuelt",
+    '<p>Plenum med Fischer, så jobber hver student/gruppe med en plan for et eget, reelt prosjekt (bygger på malen Implementation Plan VDC og BM6101).</p>'+
+    '<h5>'+IC("task")+'Hva planen skal inneholde</h5><ul>'+["<b>Nullpunkt:</b> hvor står prosjektet i dag?","<b>Ønsket effekt/gevinst:</b> formulert som målbare mål (Metrics).","<b>Hvilke VDC-elementer</b> innføres først, og hvorfor.","<b>Hvem og når:</b> roller, ansvar og realistisk tidslinje.","<b>Hindringer:</b> bruk Lippitt-Knoster.","<b>Måling:</b> hvordan vise oppnådd effekt (gevinstrealisering)."].map(x=>'<li>'+x+'</li>').join("")+'</ul>'+
+    '<h5>'+IC("spark")+'Det utfordrende – og spennende</h5><ul>'+["Å gå fra et trygt kursmiljø til et prosjekt med ekte motstand.","Å velge ETT realistisk første steg.","Å sikre lederforankring.","Å holde praksisen i live når hverdagen melder seg."].map(x=>'<li class="q">'+x+'</li>').join("")+'</ul>');
+  h+=sec2("compass","Mentorens rolle","Slik veileder du implementeringen","Her blir din egen erfaring fra eget prosjekt gull verdt.",
+    '<div class="cardgrid">'+
+      mini("target","Utfordre på realisme","Hjelp studenten å avgrense: ett prosjekt, ett tydelig første steg, målbar effekt.")+
+      mini("balance","Les motstanden","Bruk SPGR og endringsledelse til å forstå hvor motstanden sitter, og møt den med involvering.")+
+      mini("grow","Koble til gevinst","Knytt planen til nullpunkt og målbar effekt, så den kan forsvares og spres.")+
+      mini("chat","Avtal oppfølging","Sett konkrete sjekkpunkter fram mot midtveissamlingene.")+
+    '</div>');
+  h+='<div class="takeaway" style="margin-top:24px"><span class="ti">'+IC("rocket")+'</span><div><div class="tl">Målet med implementeringsfasen</div><p>At hver student forlater introuka med en konkret, realistisk plan for å skape målbar effekt med VDC – og en mentor som følger dem videre.</p></div></div>';
+  return h;
+}
+
+loadStore();tabs();render();
+</script>
+</body>
+</html>
