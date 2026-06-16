@@ -158,7 +158,7 @@ function collectGrid(){
   let h='<div class="collect">';
   ids.forEach(id=>{
     const g=STORE.groups[id], m=g.meta||{};
-    const ctx=(g.ctx&&g.ctx[s.no])||{};
+    const ctx=groupCtx(g);
     const ctxName=ctx.sel==="own"?(ctx.own||L("Egen case","Own case")):(ctx.sel!=null&&KONTEKST[ctx.sel]?KONTEKST[ctx.sel].t:"–");
     h+='<div class="ccard2"><div class="cc-head" style="--cc:'+s.accent+'"><b>'+(m.team?m.team+" · ":"")+L("Gruppe ","Group ")+(m.num||"?")+'</b><span class="cc-ctx">'+IC("building")+esc(ctxName)+'</span></div>';
     let any=false;

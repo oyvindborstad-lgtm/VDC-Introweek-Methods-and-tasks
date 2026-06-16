@@ -24,7 +24,7 @@ let TOOLREG=[];
 
 function toolHTML(o,s){
   if(!o.tool)return"";
-  const t=o.tool, id=boardId(o,s), dom="tool_"+id.replace(/[^a-z0-9]/gi,"_");
+  const t=o.tool, id=boardId(o,s), dom="tool_s"+s.no+"_o"+o.n;
   TOOLREG.push({dom,t,id,color:s.color,accent:s.accent});
   let badge='<span class="tool-kind">'+IC(kindIcon(t.k))+kindLabel(t.k)+'</span>';
   let shared=t.shared?'<span class="tool-shared">'+IC("link")+L("delt tavle","shared board")+'</span>':'';
@@ -105,6 +105,7 @@ function buildCols(stage,reg){
   const id=reg.id,t=reg.t;
   const st=boardState(id,{titles:t.cols.map(c=>c.t),cards:[]});
   if(st.titles.length<t.cols.length)st.titles=t.cols.map((c,i)=>st.titles[i]||c.t);
+  if(t.fixed)st.titles=t.cols.map(c=>c.t); // fixed columns always follow the data labels
   function colColor(i){return (t.cols[i]&&t.cols[i].color)||"#00509E";}
   stage.innerHTML='<div class="bbar">'+
     (t.addCol?'<button class="bbtn addcol">'+IC("plus")+L("Ny kolonne","New column")+'</button>':'')+
@@ -264,7 +265,8 @@ function buildMap(stage,reg){
   let addBtns;
   if(bands){addBtns=bands.map((b,i)=>'<button class="bbtn band" data-band="'+i+'" style="--cc:'+b.color+'">'+IC("plus")+b.t+'</button>').join("");}
   else addBtns='<button class="bbtn add">'+IC("plus")+L("Ny boble","New bubble")+'</button>';
-  stage.innerHTML='<div class="bbar">'+addBtns+colorBtns+'<button class="bbtn ghost clr" style="margin-left:auto">'+L("Tøm","Clear")+'</button></div>'+
+  const impBtn=t.fromGoals?'<button class="bbtn ghost impg">'+IC("link")+(t.fromGoalsLabel||L("Hent målene fra VDC Intro","Pull the objectives from VDC Intro"))+'</button>':'';
+  stage.innerHTML='<div class="bbar">'+addBtns+impBtn+colorBtns+'<button class="bbtn ghost clr" style="margin-left:auto">'+L("Tøm","Clear")+'</button></div>'+
     '<div class="mapstage" data-map><svg class="mapsvg"></svg><div class="maphint">'+(bands?L('Velg et bånd og legg inn kort. ','Choose a band and add cards. '):L('Legg inn bobler. ','Add bubbles. '))+L('Klikk to bobler etter hverandre for å koble dem; klikk en strek for å fjerne den.','Click two bubbles in turn to connect them; click a line to remove it.')+'</div></div>';
   const area=stage.querySelector("[data-map]");
   const svg=area.querySelector(".mapsvg");
@@ -277,6 +279,17 @@ function buildMap(stage,reg){
   if(bands)stage.querySelectorAll(".band").forEach(b=>b.onclick=()=>addNode(+b.dataset.band));
   else stage.querySelector(".add").onclick=()=>addNode(null);
   stage.querySelector(".clr").onclick=()=>{if((st.nodes.length||st.edges.length)&&confirm(L("Tøm kartet?","Clear the map?"))){st.nodes=[];st.edges=[];saveStore();draw();}};
+  const impg=stage.querySelector(".impg");
+  if(impg)impg.onclick=()=>{
+    const src=(G().boards||{})[t.fromGoals];
+    const defaults=[L("Forbedringsmål 1","Improvement objective 1"),L("Forbedringsmål 2","Improvement objective 2"),L("Forbedringsmål 3","Improvement objective 3")];
+    const titles=(src&&src.titles)?src.titles.map(x=>(x||"").trim()).filter(x=>x&&defaults.indexOf(x)<0):[];
+    if(!titles.length){alert(L("Ingen mål å hente ennå – døp kolonnene i VDC Intro (oppgave 2) først.","No objectives to pull yet — name the columns in VDC Intro (task 2) first."));return;}
+    const existing=new Set(st.nodes.map(n=>(n.text||"").trim()));
+    let added=0;titles.forEach((tx,i)=>{if(!existing.has(tx)){st.nodes.push({id:uid(),x:30+(st.nodes.length%4)*130,y:34+(st.nodes.length%3)*78,text:tx,band:null});existing.add(tx);added++;}});
+    saveStore();draw();
+    if(!added)alert(L("Alle målene er allerede hentet inn.","All objectives are already pulled in."));
+  };
   function nodeEl(n){
     const el=document.createElement("div");el.className="mnode"+(SEL===n.id?" sel":"");el.dataset.nid=n.id;el.style.cssText="left:"+n.x+"px;top:"+n.y+"px;"+(n.color?"--cc:"+n.color+";border-color:"+n.color:"");
     el.innerHTML='<span class="ndel">×</span><span class="nt" contenteditable spellcheck="false" data-ph="'+L("navn …","name …")+'"></span>';
@@ -344,8 +357,9 @@ const ICEROLES=["ARK","RIB","RIV","Byggherre","PL","RIE","Entreprenør","Bruker"
 function roleLabel(r){return ({"Byggherre":L("Byggherre","Client"),"Entreprenør":L("Entreprenør","Contractor"),"Bruker":L("Bruker","User")})[r]||r;}
 function buildIce(stage,reg){
   const id=reg.id;
-  const st=boardState(id,{placed:[],underlag:["","",""],agenda:["","","",""]});
-  stage.innerHTML='<div class="bbar"><span class="palh">'+L("Dra rolle inn på bordet:","Drag a role onto the table:")+'</span>'+
+  const st=boardState(id,{placed:[],underlag:["","",""],agenda:["","","",""],objective:""});
+  stage.innerHTML='<div class="iceobj"><div class="icelh">'+IC("target")+L("Mål for sesjonen – hva skal besluttes?","Objective of the session — what must be decided?")+'</div><input class="iceobj-in" placeholder="'+L("Vi skal bestemme …","We will decide …")+'" value="'+((st.objective||"").replace(/"/g,"&quot;"))+'"></div>'+
+    '<div class="bbar"><span class="palh">'+L("Dra rolle inn på bordet:","Drag a role onto the table:")+'</span>'+
       ICEROLES.map(r=>'<span class="rolechip" draggable="false" data-r="'+r+'">'+roleLabel(r)+'</span>').join("")+'</div>'+
     '<div class="iceflex"><div class="icetable" data-icet><div class="icetbl"><span>'+L("ICE-bord","ICE table")+'</span></div><div class="icehint">'+L("Dra fagroller hit – plasser dem rundt bordet","Drag disciplines here — place them around the table")+'</div></div>'+
     '<div class="icelists"><div class="icelist"><div class="icelh">'+IC("clip")+L("Underlag som må være klart","Inputs that must be ready")+'</div><div data-ul></div></div>'+
@@ -367,6 +381,7 @@ function buildIce(stage,reg){
     const add=document.createElement("button");add.className="bbtn ghost icemore";add.innerHTML=IC("plus")+L("linje","line");add.onclick=()=>{arr.push("");saveStore();lineList(host,arr,ph);};host.appendChild(add);}
   lineList(stage.querySelector("[data-ul]"),st.underlag,L("Underlag …","Input …"));
   lineList(stage.querySelector("[data-ag]"),st.agenda,L("Agendapunkt …","Agenda point …"));
+  const obj=stage.querySelector(".iceobj-in");if(obj)obj.oninput=()=>{st.objective=obj.value;saveStore();};
   drawTable();
 }
 function dragXY3(el,area,model,onEnd){el.addEventListener("pointerdown",e=>{if(e.target.classList.contains("prdel"))return;e.preventDefault();const r=area.getBoundingClientRect();const ox=e.clientX-r.left-model.x,oy=e.clientY-r.top-model.y;el.style.zIndex=20;

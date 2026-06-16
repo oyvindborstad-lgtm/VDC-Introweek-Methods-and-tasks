@@ -138,9 +138,9 @@ function render(){
 }
 function bindOppgaver(){
   const sel=document.getElementById("ctxSel");
-  if(sel)sel.onchange=()=>{const v=sel.value;G().ctx[SUB]=Object.assign({},G().ctx[SUB],{sel:(v===""?null:(v==="own"?"own":parseInt(v)))});saveStore();render();};
+  if(sel)sel.onchange=()=>{const c=curCtx();const v=sel.value;c.sel=(v===""?null:(v==="own"?"own":parseInt(v)));saveStore();render();};
   const own=document.getElementById("ctxOwn");
-  if(own)own.oninput=()=>{G().ctx[SUB]=Object.assign({},G().ctx[SUB],{sel:"own",own:own.value});saveStore();updateChips();};
+  if(own)own.oninput=()=>{const c=curCtx();c.sel="own";c.own=own.value;saveStore();updateChips();};
   document.querySelectorAll("textarea[data-ans]").forEach(t=>{t.value=G().answers[t.dataset.ans]||"";t.oninput=()=>{G().answers[t.dataset.ans]=t.value;saveStore();};});
 }
 

@@ -2,15 +2,24 @@
    VIEWS — page renderers (bilingual via L())
    ============================================================ */
 
-/* ---- context helpers (per active group) ---- */
-function curCtx(){const g=G();return (g.ctx&&g.ctx[SUB])||{};}
+/* ---- context: ONE per work group, carried through ALL six sessions ---- */
+function curCtx(){
+  const g=G(); if(!g.ctx||typeof g.ctx!=="object") g.ctx={};
+  // migrate old per-session shape {1:{sel,own},2:{…}} → flat {sel,own}
+  if(g.ctx.sel===undefined && g.ctx.own===undefined){
+    for(const k in g.ctx){ if(/^\d+$/.test(k)){ const v=g.ctx[k]; if(v&&(v.sel!=null||v.own)){ g.ctx={sel:v.sel,own:v.own}; saveStore(); break; } } }
+    for(const k in g.ctx){ if(/^\d+$/.test(k)) delete g.ctx[k]; }
+  }
+  return g.ctx;
+}
+function groupCtx(g){ if(!g||!g.ctx) return {}; if(g.ctx.sel!==undefined||g.ctx.own!==undefined) return g.ctx; for(const k in g.ctx){ if(/^\d+$/.test(k)&&g.ctx[k]&&(g.ctx[k].sel!=null||g.ctx[k].own)) return g.ctx[k]; } return g.ctx; }
 function ctxLabel(){const c=curCtx();if(c.sel==="own")return c.own&&c.own.trim()?c.own:L("Egen case fra arbeidsgruppa","Your own case from the work group");if(c.sel!=null&&c.sel!=="own"&&KONTEKST[c.sel])return KONTEKST[c.sel].t;return null;}
 function ctxBar(){
   const c=curCtx();
   let opts='<option value="">'+L("– velg kontekst –","– choose a context –")+'</option>';
   KONTEKST.forEach((k,i)=>{opts+='<option value="'+i+'"'+(c.sel==i?' selected':'')+'>'+k.t+' · '+k.sektor+'</option>';});
   opts+='<option value="own"'+(c.sel==="own"?' selected':'')+'>'+L("Egen case fra arbeidsgruppa …","Your own case from the work group …")+'</option>';
-  let h='<div class="ctxbar"><div class="cth">'+IC("building")+L("Velg kontekst – den fylles automatisk inn på alle oppgavene under","Choose a context — it fills in automatically on every task below")+'</div>';
+  let h='<div class="ctxbar"><div class="cth">'+IC("building")+L("Gruppas kontekst – velges én gang og følger dere gjennom alle seks sesjonene","Your group's context — chosen once and carried through all six sessions")+'</div>';
   h+='<div class="ctxrow"><select id="ctxSel">'+opts+'</select>';
   if(c.sel==="own")h+='<input id="ctxOwn" placeholder="'+L("Skriv kort hva caset handler om …","Briefly describe the case …")+'" value="'+((c.own||"").replace(/"/g,"&quot;"))+'">';
   h+='</div>';
@@ -173,6 +182,14 @@ function formatBanner(p,s){
 }
 
 /* ============================ OPPGAVER ============================ */
+function taskFlow(s,isM){
+  const chips=s.oppgaver.map((o,i)=>{
+    const lbl=o.tool?o.tool.title:typeLbl(o.type);
+    const carry=(o.tool&&(o.tool.fromBoard||o.tool.fromGoals))?'<span class="tf-carry">'+IC("link")+L("henter fra tidligere","pulls earlier work")+'</span>':'';
+    return '<div class="tf-step"><span class="tf-n" style="background:'+s.color+'">'+o.n+'</span><span class="tf-l">'+lbl+'</span>'+carry+'</div>'+(i<s.oppgaver.length-1?'<span class="tf-arr">\u2192</span>':'');
+  }).join("");
+  return '<div class="taskflow reveal"><div class="tf-h">'+IC("route")+'<b>'+L("Flyt i økten","Flow of the session")+'</b><span class="tf-sub">'+L("Oppgavene bygger på hverandre – svar føres videre der pilene viser","The tasks build on each other — answers carry forward where the links show")+'</span></div><div class="tf-row">'+chips+'</div></div>';
+}
 function oppgaverView(){
   const s=SESS.find(x=>x.no===SUB);
   const isM=ROLE==="mentor";
@@ -184,6 +201,7 @@ function oppgaverView(){
   const pf=PED[s.no];
   if(pf)h+='<div class="fmtchip reveal" style="--ac:'+s.accent+'">'+IC("spark")+'<span><b>'+L("Arbeidsform:","Working method:")+'</b> '+pf.format.w1.name+L(" (trening) → "," (practice) → ")+pf.format.w2.name+L(" (refleksjon)"," (reflection)")+'</span>'+(isM?'<button class="fmtchip-link" onclick="go(\'kjoreplan\')">'+L("Se kjøreplan ›","See run-of-show ›")+'</button>':'')+'</div>';
   h+=ctxBar();
+  h+=taskFlow(s,isM);
   h+='<div class="wsh">'+IC("task")+L("Workshop 1 · Trening","Workshop 1 · Practice")+' <span class="wsh-sub">'+L("· 60 min · arbeidsgruppe á 5","· 60 min · work group of 5")+(pf?' · '+pf.format.w1.name:'')+'</span></div>';
   s.oppgaver.forEach(o=>{
     h+='<div class="opg reveal"><div class="oh"><div class="on" style="background:'+s.color+'">'+o.n+'</div><div style="flex:1">'+ctxChip()+'<div class="otype '+(o.type||"analyse")+'">'+typeLbl(o.type)+'</div><div class="oq">'+o.q+'</div></div></div>';
@@ -218,6 +236,11 @@ function oppgaverView(){
 function kontekstView(){
   let h='<div class="eyebrow">'+IC("building")+' '+L("Kontekster","Contexts")+'</div><h1>'+L("Velg en situasjon å jobbe med","Choose a situation to work with")+'</h1>';
   h+='<p class="lead">'+L("Hver arbeidsgruppe velger én typisk, utfordrende situasjon fra lista – innen bygg, anlegg, infrastruktur eller industri. Finner dere ikke noe som passer, lar dere én i gruppa fortelle om en reell case fra eget prosjekt. <b>Samme kontekst følger dere gjennom alle seks sesjonene</b>, akkurat som et ekte prosjekt.","Each work group picks one typical, challenging situation from the list — in building, civil, infrastructure or industry. If nothing fits, let someone in the group describe a real case from their own project. <b>The same context follows you through all six sessions</b>, just like a real project.")+'</p>';
+  h+='<div class="methodgrid reveal">'+
+     mini("building",L("Én kontekst per gruppe – hele uka","One context per group — all week"),L("Gruppa velger konteksten i VDC Intro, og den fylles automatisk inn på hver sesjon. Slik bygger arbeidet seg opp som i et ekte prosjekt: mål → målinger → beslutninger → prosess → flyt → informasjon.","The group picks the context in VDC Intro, and it fills in automatically on every session. The work builds up like a real project: objectives → metrics → decisions → process → flow → information."))+
+     mini("users",L("Ulike kontekster i samme team – det er meningen","Different contexts in the same team — that's the point"),L("De fire gruppene i et mentorteam jobber med hver sin kontekst. I refleksjonen (Workshop 2) ser dere at de samme VDC-prinsippene gjelder på tvers av svært ulike prosjekter – det er selve læringen.","The four groups in a mentor team each work with a different context. In the reflection (Workshop 2) you see the same VDC principles hold across very different projects — that's the real learning."))+
+     mini("spark",L("Varierte arbeidsformer","Varied working methods"),L("Hver sesjon bruker en bevisst forskjellig metode – 1→2→4→Alle, gallery walk, rolle-simulering, speed-kritikk, spill og World Café – for å treffe flere læringsstiler og holde energien oppe.","Each session uses a deliberately different method — 1→2→4→All, gallery walk, role simulation, speed critique, games and World Café — to reach more learning styles and keep the energy up."))+
+     '</div>';
   h+='<div class="kgrid reveal">';
   KONTEKST.forEach(k=>{h+='<div class="kcard"><div class="ktags"><span class="ktag">'+k.sektor+'</span><span class="ktag fase">'+k.fase+'</span></div><h4>'+k.t+'</h4><p>'+k.s+'</p><div class="chall">'+IC("flag")+' '+k.c+'</div></div>';});
   h+='<div class="kcard own"><div class="ktags"><span class="ktag" style="background:var(--cardinal-soft);color:var(--cardinal)">'+L("Egen case","Own case")+'</span></div><h4>'+L("Egen situasjon fra arbeidsgruppa","Your own situation from the group")+'</h4><p>'+L("Finner dere ikke en passende kontekst? La én i gruppa fortelle om en reell, utfordrende situasjon fra eget prosjekt – og bruk den gjennom sesjonene.","Can't find a context that fits? Let someone in the group describe a real, challenging situation from their own project — and use it through the sessions.")+'</p><div class="chall" style="background:var(--cardinal-soft);color:var(--cardinal-dark)">'+IC("group")+' '+L("Velg noe konkret nok til at dere kan sette mål, måle og finne tiltak.","Pick something concrete enough to set objectives, measure and find actions.")+'</div></div>';

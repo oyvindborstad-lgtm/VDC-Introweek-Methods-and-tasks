@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VDC Compass · Workshop Tasks — Briefing (EN)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ntnu:#00509E; --ntnu-dark:#003a73; --ntnu-soft:#eef3fb; --ntnu-line:#cfdaf1;
+  --cardinal:#8C1515; --red:#B1040E; --cardinal-soft:#f3e3e3;
+  --ink:#16191f; --ink-2:#525a67; --muted:#6a7280; --faint:#aab0bb;
+  --bg:#d9d7cf; --card:#ffffff; --cloud:#fbfaf7; --line:#e4e2dc; --line-2:#efeee9;
+  --green:#2e7d57; --green-soft:#e3f1ea; --yellow:#d98a1f;
+  --serif:'Source Serif 4',Georgia,serif; --sans:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+body{font-family:var(--sans);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+svg{flex-shrink:0}
+
+/* screen: stacked pages on a desk */
+.deck{display:flex;flex-direction:column;align-items:center;gap:22px;padding:30px 16px 60px}
+.page{position:relative;width:297mm;min-height:210mm;background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.1),0 18px 50px rgba(0,0,0,.18);overflow:hidden;display:flex;flex-direction:column}
+.pad{padding:16mm 18mm 14mm}
+
+/* print */
+@page{size:A4 landscape;margin:0}
+@media print{
+  html,body{background:#fff}
+  .deck{display:block;padding:0;gap:0}
+  .toolbar{display:none!important}
+  .page{width:297mm;height:209.5mm;min-height:0;box-shadow:none;page-break-after:always;break-after:page}
+  .page:last-child{page-break-after:auto}
+}
+
+/* toolbar */
+.toolbar{position:fixed;top:16px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:999px;padding:8px 10px 8px 16px;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.toolbar span{font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.toolbar button{font-family:inherit;cursor:pointer;border:none;background:var(--ntnu);color:#fff;font-size:13px;font-weight:800;padding:9px 16px;border-radius:999px;display:flex;align-items:center;gap:7px}
+.toolbar button:hover{background:var(--ntnu-dark)}
+.toolbar button svg{width:15px;height:15px}
+
+/* ---------- COVER ---------- */
+.cover{background:radial-gradient(1100px 520px at 72% -8%,rgba(0,80,158,.5),transparent 60%),linear-gradient(160deg,#171b22,#0e1116);color:#fff;justify-content:space-between}
+.cover::after{content:"";position:absolute;right:-150px;top:-120px;width:560px;height:560px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.09)}
+.cov-top{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.cmark-box{width:54px;height:54px;border-radius:14px;background:linear-gradient(150deg,#00509E,#003a73);display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,80,158,.4)}
+.cmark-svg .cmark-ring{transform-origin:24px 24px;animation:cring 34s linear infinite}
+.cmark-svg .cmark-needle{transform-origin:24px 24px;animation:cneedle 7s cubic-bezier(.22,.61,.36,1) infinite}
+@keyframes cring{to{transform:rotate(360deg)}}
+@keyframes cneedle{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@media print,(prefers-reduced-motion:reduce){.cmark-svg *{animation:none!important}}
+.cov-brand .wm{font-family:var(--serif);font-size:24px;font-weight:700}
+.cov-brand .wm b{color:#7fb2e6}
+.cov-brand small{font-size:10px;letter-spacing:2.5px;color:rgba(255,255,255,.55);font-weight:800;display:block;margin-top:4px}
+.cov-mid{position:relative;z-index:1}
+.cov-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.18em;font-weight:800;color:#9fc4ec;text-transform:uppercase;margin-bottom:18px}
+.cov-eyebrow::before{content:"";width:30px;height:2px;background:var(--green);border-radius:2px}
+.cover h1{font-family:var(--serif);font-size:62px;font-weight:700;line-height:1;letter-spacing:-.03em;margin-bottom:20px}
+.cover .sub{font-size:19px;color:rgba(255,255,255,.84);max-width:640px;line-height:1.5}
+.cov-foot{display:flex;gap:34px;position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.14);padding-top:20px}
+.cov-stat .k{font-family:var(--serif);font-size:30px;font-weight:700;color:#fff;line-height:1}
+.cov-stat .l{font-size:12px;color:rgba(255,255,255,.6);font-weight:700;margin-top:5px}
+
+/* ---------- section eyebrow ---------- */
+.eyebrow{display:flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.15em;font-weight:800;color:var(--cardinal);text-transform:uppercase;margin-bottom:10px}
+.eyebrow svg{width:15px;height:15px}
+.ptitle{font-family:var(--serif);font-size:27px;font-weight:700;letter-spacing:-.02em;line-height:1.08;margin-bottom:12px;max-width:1000px}
+.plead{font-size:15px;color:var(--ink-2);max-width:880px;line-height:1.5}
+
+/* overview rhythm */
+.rhythm{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.rcard{border:1px solid var(--line);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;background:var(--cloud)}
+.rcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ac)}
+.rcard .rnum{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ac)}
+.rcard h3{font-family:var(--serif);font-size:18px;font-weight:600;margin:4px 0 6px}
+.rcard p{font-size:12.5px;color:var(--ink-2);line-height:1.45}
+.rcard .who{display:inline-block;margin-top:10px;font-size:11px;font-weight:800;color:var(--ink-2);background:#fff;border:1px solid var(--line);padding:4px 10px;border-radius:999px}
+
+.sesstable{margin-top:18px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.sesstable .row{display:flex;align-items:center;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line-2)}
+.sesstable .row:last-child{border-bottom:none}
+.snum{width:28px;height:28px;border-radius:8px;color:#fff;font-family:var(--serif);font-weight:700;font-size:15px;display:grid;place-items:center;flex-shrink:0}
+.stema{font-weight:800;font-size:14px;flex:1;min-width:160px}
+.smeth{font-size:12px;font-weight:700;color:var(--ink-2);background:var(--cloud);border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap}
+.sday{font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+
+/* ---------- session page ---------- */
+.shead{display:flex;align-items:flex-start;gap:16px;padding-bottom:14px;border-bottom:2px solid var(--ac)}
+.sbig{width:62px;height:62px;border-radius:16px;background:var(--ac);color:#fff;font-family:var(--serif);font-weight:700;font-size:34px;display:grid;place-items:center;flex-shrink:0}
+.shead .meta{flex:1;min-width:0}
+.shead .kicker{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.shead h2{font-family:var(--serif);font-size:26px;font-weight:700;letter-spacing:-.02em;margin:2px 0 4px;line-height:1.05}
+.shead .el{font-size:12.5px;color:var(--ink-2)}
+.shead .when{text-align:right;flex-shrink:0}
+.shead .when .d{font-size:12px;font-weight:800;color:var(--ink);white-space:nowrap}
+.shead .when .t{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap}
+
+.goalbar{display:flex;gap:12px;align-items:flex-start;background:var(--ac);color:#fff;border-radius:12px;padding:14px 18px;margin:14px 0}
+.goalbar svg{width:20px;height:20px;flex-shrink:0;margin-top:2px}
+.goalbar .gl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.goalbar p{font-size:14px;font-weight:600;line-height:1.4;margin-top:2px}
+
+.method{display:flex;gap:12px;align-items:flex-start;background:var(--cloud);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+.method svg{width:18px;height:18px;color:var(--green);flex-shrink:0;margin-top:1px}
+.method .ml{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green)}
+.method .mn{font-weight:800;font-size:14px;margin:1px 0 3px}
+.method p{font-size:12.5px;color:var(--ink-2);line-height:1.45}
+
+.tasks-h{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);margin-bottom:10px}
+.tasks-h svg{width:14px;height:14px;color:var(--cardinal)}
+.tasks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:6px;break-inside:avoid}
+.task .top{display:flex;align-items:center;gap:9px}
+.tnum{width:24px;height:24px;border-radius:7px;background:var(--ink);color:#fff;font-family:var(--serif);font-weight:700;font-size:13px;display:grid;place-items:center;flex-shrink:0}
+.ttype{font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:5px}
+.ttype.practical{background:var(--green-soft);color:var(--green)}
+.ttype.reflection{background:var(--ntnu-soft);color:var(--ntnu)}
+.ttype.analysis{background:var(--cardinal-soft);color:var(--cardinal)}
+.tool-chip{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:var(--ntnu);background:var(--ntnu-soft);padding:4px 9px;border-radius:999px;white-space:nowrap}
+.tool-chip svg{width:11px;height:11px}
+.task .q{font-size:13px;font-weight:700;color:var(--ink);line-height:1.35}
+.task .how{font-size:11.5px;color:var(--ink-2);line-height:1.4}
+.task .how b{color:var(--ink)}
+
+.sfoot{margin-top:auto;padding-top:12px;display:flex;gap:12px}
+.aw{flex:1;background:var(--cloud);border:1px solid var(--line);border-left:3px solid var(--ac);border-radius:10px;padding:11px 14px}
+.aw .l{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);margin-bottom:3px}
+.aw p{font-size:12px;color:var(--ink-2);line-height:1.4}
+.take{flex:1;background:var(--ink);color:#fff;border-radius:10px;padding:11px 14px;display:flex;gap:10px;align-items:center}
+.take svg{width:22px;height:22px;flex-shrink:0;opacity:.7}
+.take .l{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.65}
+.take p{font-size:12.5px;font-weight:600;line-height:1.35;margin-top:1px}
+
+.pagefoot{position:absolute;left:18mm;right:18mm;bottom:8mm;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--faint);font-weight:700;border-top:1px solid var(--line-2);padding-top:6px}
+.pagefoot .wm b{color:var(--ntnu)}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span>English · print to PDF</span>
+  <button onclick="window.print()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-3a2 2 0 012-2h16a2 2 0 012 2v3a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Save as PDF
+  </button>
+</div>
+
+<div class="deck" id="deck"></div>
+
+<script src="app/icons.js"></script>
+<script src="app/data.js"></script>
+<script src="app/pedagogy.js"></script>
+<script>
+/* English briefing built from the live workshop data */
+LANG="en"; applyDataLang(); applyPedLang();
+
+function esc(s){return (s==null?"":(""+s)).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function typeLabel(t){return {praktisk:"Practical",refleksjon:"Reflection",analyse:"Analysis"}[t]||"Task";}
+function typeClass(t){return {praktisk:"practical",refleksjon:"reflection",analyse:"analysis"}[t]||"analysis";}
+
+function cover(){
+  return '<section class="page cover"><div class="pad" style="display:flex;flex-direction:column;justify-content:space-between;height:100%;flex:1">'+
+    '<div class="cov-top"><div class="cmark-box">'+COMPASS_MARK(38)+'</div>'+
+      '<div class="cov-brand"><div class="wm"><b>VDC</b> Compass</div><small>INTRO WEEK · WORKSHOPS</small></div></div>'+
+    '<div class="cov-mid"><div class="cov-eyebrow">Mentor briefing · Workshop tasks</div>'+
+      '<h1>The six VDC<br>workshops</h1>'+
+      '<p class="sub">What each session teaches, the working method, and the exact tasks the work groups run — everything done directly in the tool, no Miro. A briefing to read before tomorrow\'s session.</p></div>'+
+    '<div class="cov-foot">'+
+      '<div class="cov-stat"><div class="k">6</div><div class="l">three-hour sessions</div></div>'+
+      '<div class="cov-stat"><div class="k">1 + 1 + 1</div><div class="l">input · practice · reflection</div></div>'+
+      '<div class="cov-stat"><div class="k">60</div><div class="l">participants · teams of 20 · groups of 5</div></div>'+
+      '<div class="cov-stat"><div class="k">Aug 3–7</div><div class="l">2026 · intro week</div></div>'+
+    '</div></div></section>';
+}
+
+function overview(){
+  const colors=SESS.map(s=>s.accent);
+  let rows=SESS.map(s=>{
+    const ped=PED[s.no]&&PED[s.no].format?PED[s.no].format.w1.name+' · '+PED[s.no].format.w2.name:'';
+    return '<div class="row"><span class="snum" style="background:'+s.accent+'">'+s.no+'</span>'+
+      '<span class="stema">'+esc(s.tema)+'</span>'+
+      '<span class="smeth">'+esc(ped)+'</span>'+
+      '<span class="sday">'+esc(s.day)+'</span></div>';
+  }).join("");
+  return '<section class="page"><div class="pad">'+
+    '<div class="eyebrow">'+IC("route")+'How the week works</div>'+
+    '<h1 class="ptitle">One hour of input, one of practice, one of reflection — six times over.</h1>'+
+    '<p class="plead">Sixty participants, split into mentor teams of twenty and work groups of five. Every three-hour session follows the same rhythm, but the <b>working method changes each time</b> so the activity itself reinforces what the session teaches. Each group keeps one context for the whole week.</p>'+
+    '<div class="rhythm">'+
+      '<div class="rcard" style="--ac:var(--cardinal)"><div class="rnum">Hour 1 · Input</div><h3>Martin Fischer sets the standard</h3><p>Plenary for all 60 — the background, mindset and purpose behind each VDC element.</p><span class="who">All 60 · plenary</span></div>'+
+      '<div class="rcard" style="--ac:var(--ntnu)"><div class="rnum">Hour 2 · Practice</div><h3>The work groups train</h3><p>Groups of five work hands-on with their chosen context, on runnable boards and games.</p><span class="who">Groups of 5</span></div>'+
+      '<div class="rcard" style="--ac:var(--green)"><div class="rnum">Hour 3 · Reflection</div><h3>The mentor team reflects</h3><p>The four groups share and reflect across teams, facilitated by the mentor.</p><span class="who">Mentor team · 4 groups</span></div>'+
+    '</div>'+
+    '<div class="tasks-h" style="margin-top:18px">'+IC("list")+'The six sessions &amp; their working method</div>'+
+    '<div class="sesstable">'+rows+'</div>'+
+    '</div>'+pageFoot("How the week works")+'</section>';
+}
+
+function sessionPage(s){
+  const ped=PED[s.no];
+  const method=ped&&ped.format?ped.format.w1:null;
+  let tasks=s.oppgaver.map(o=>{
+    const tool=o.tool?'<span class="tool-chip">'+IC("note")+esc(o.tool.title)+'</span>':'';
+    return '<div class="task"><div class="top"><span class="tnum">'+o.n+'</span>'+
+      '<span class="ttype '+typeClass(o.type)+'">'+typeLabel(o.type)+'</span>'+tool+'</div>'+
+      '<div class="q">'+esc(o.q)+'</div>'+
+      (o.how?'<div class="how"><b>How:</b> '+esc(o.how)+'</div>':'')+
+    '</div>';
+  }).join("");
+  return '<section class="page"><div class="pad" style="flex:1;display:flex;flex-direction:column">'+
+    '<div class="shead" style="--ac:'+s.accent+'"><div class="sbig" style="--ac:'+s.accent+'">'+s.no+'</div>'+
+      '<div class="meta"><div class="kicker">Session '+s.no+' · '+esc(s.el)+'</div>'+
+        '<h2>'+esc(s.tema)+'</h2></div>'+
+      '<div class="when"><div class="d">'+esc(s.day)+'</div><div class="t">'+esc(s.time)+'</div></div></div>'+
+    '<div class="goalbar" style="--ac:'+s.accent+'">'+IC("target")+'<div><div class="gl">Learning goal</div><p>'+esc(s.goal)+'</p></div></div>'+
+    (method?'<div class="method">'+IC("spark")+'<div><div class="ml">Working method · practice hour</div><div class="mn">'+esc(method.name)+'</div><p>'+esc(ped.why)+'</p></div></div>':'')+
+    '<div class="tasks-h">'+IC("task")+'The tasks the groups run (Workshop 1 · 60 min)</div>'+
+    '<div class="tasks">'+tasks+'</div>'+
+    '<div class="sfoot">'+
+      '<div class="aw" style="--ac:'+s.accent+'"><div class="l">Awareness to leave with</div><p>'+esc(s.awareness)+'</p></div>'+
+      '<div class="take">'+IC("star")+'<div><div class="l">Key takeaway</div><p>'+esc(s.takeaway)+'</p></div></div>'+
+    '</div>'+
+    '</div>'+pageFoot("Session "+s.no+" · "+s.tema)+'</section>';
+}
+
+function pageFoot(label){
+  return '<div class="pagefoot"><span class="wm"><b>VDC</b> Compass · Intro Week 2026</span><span>'+esc(label)+'</span></div>';
+}
+
+let html=cover()+overview();
+SESS.forEach(s=>{html+=sessionPage(s);});
+document.getElementById("deck").innerHTML=html;
+document.title="VDC Compass · Workshop Tasks (EN)";
+</script>
+</body>
+</html>
