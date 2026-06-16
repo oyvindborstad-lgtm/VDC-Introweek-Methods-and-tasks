@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VDC Compass · Intro Week — Workshops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ntnu:#00509E; --ntnu-dark:#003a73; --ntnu-soft:#eef3fb; --ntnu-line:#cfdaf1;
+  --cardinal:#8C1515; --red:#B1040E; --cardinal-soft:#f3e3e3;
+  --ink:#16191f; --ink-2:#525a67; --muted:#6a7280; --faint:#aab0bb;
+  --bg:#f4f3ee; --card:#ffffff; --cloud:#fbfaf7; --line:#e4e2dc; --line-2:#efeee9;
+  --green:#2e7d57; --green-soft:#e3f1ea; --yellow:#d98a1f;
+  --serif:'Source Serif 4',Georgia,serif; --sans:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --r:10px; --r-lg:16px; --r-xl:24px;
+  --shadow:0 1px 3px rgba(28,31,38,.04),0 8px 24px rgba(28,31,38,.06);
+  --shadow-lg:0 4px 12px rgba(28,31,38,.08),0 24px 60px rgba(28,31,38,.14);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+svg{flex-shrink:0}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+button:focus-visible,input:focus-visible{outline:2.5px solid var(--ntnu);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+
+/* ---------- hero (dark) ---------- */
+.hero{position:relative;background:radial-gradient(1200px 520px at 70% -10%,rgba(0,80,158,.55),transparent 60%),linear-gradient(160deg,#171b22,#0e1116);color:#fff;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-120px;top:-120px;width:560px;height:560px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.08);pointer-events:none}
+.hero-in{position:relative;max-width:1080px;margin:0 auto;padding:30px 32px 64px}
+.brand{display:flex;align-items:center;gap:13px;margin-bottom:58px}
+.cmark{width:46px;height:46px;border-radius:13px;background:linear-gradient(150deg,#00509E,#003a73);display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,80,158,.4)}
+.cmark .ring{transform-origin:24px 24px;animation:ring 34s linear infinite}
+.cmark .needle{transform-origin:24px 24px;animation:needle 7s var(--ease) infinite}
+@keyframes ring{to{transform:rotate(360deg)}}
+@keyframes needle{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@media(prefers-reduced-motion:reduce){.cmark *{animation:none!important}}
+.brand .nm{display:flex;flex-direction:column;line-height:1}
+.brand .wm{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:-.01em}
+.brand .wm b{color:#7fb2e6}
+.brand small{font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.55);font-weight:800;margin-top:5px}
+
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.16em;font-weight:800;color:#9fc4ec;text-transform:uppercase;margin-bottom:18px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--green);border-radius:2px}
+h1{font-family:var(--serif);font-size:clamp(2.5rem,1.4rem+3.6vw,4rem);font-weight:700;line-height:1.02;letter-spacing:-.03em;margin-bottom:18px}
+.lead{font-size:18.5px;color:rgba(255,255,255,.82);max-width:520px;line-height:1.55}
+.lead b{color:#fff}
+
+/* access card */
+.gate{background:var(--card);color:var(--ink);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:30px 30px 26px}
+.gate-lbl{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.gate-lbl svg{width:15px;height:15px;color:var(--ntnu)}
+.gate h2{font-family:var(--serif);font-size:23px;font-weight:700;margin-bottom:5px}
+.gate p{font-size:13.5px;color:var(--ink-2);margin-bottom:18px;line-height:1.5}
+.gate-form{display:flex;flex-direction:column;gap:11px}
+.gate-input{width:100%;border:1.5px solid var(--line);border-radius:var(--r);padding:14px 16px;font-family:inherit;font-size:16px;font-weight:600;letter-spacing:.04em;color:var(--ink);background:var(--cloud);text-align:center}
+.gate-input:focus{outline:none;border-color:var(--ntnu);background:#fff}
+.gate-input.bad{border-color:var(--red);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.gate-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--ntnu);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:var(--r);transition:.16s var(--ease)}
+.gate-btn:hover{background:var(--ntnu-dark);transform:translateY(-1px)}
+.gate-btn svg{width:17px;height:17px}
+.gate-err{font-size:12.5px;font-weight:700;color:var(--red);min-height:16px;text-align:center}
+.gate-hint{font-size:12px;color:var(--muted);text-align:center;margin-top:2px}
+.gate.unlocked .gate-field{display:none}
+
+/* ---------- context section ---------- */
+.ctx{padding:64px 0 30px}
+.sec-eyebrow{display:flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.16em;font-weight:800;color:var(--cardinal);text-transform:uppercase;margin-bottom:12px}
+.sec-eyebrow::before{content:"";width:26px;height:2px;background:var(--cardinal);border-radius:2px}
+.ctx h2{font-family:var(--serif);font-size:clamp(1.9rem,1.3rem+1.4vw,2.6rem);font-weight:700;letter-spacing:-.02em;margin-bottom:14px;max-width:760px}
+.ctx-lead{font-size:17px;color:var(--ink-2);max-width:740px;line-height:1.55;margin-bottom:34px}
+.ctx-lead b{color:var(--ink)}
+
+.rhythm{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.rcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.rcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ac)}
+.rcard .rnum{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+.rcard h3{font-family:var(--serif);font-size:20px;font-weight:600;margin:4px 0 7px}
+.rcard p{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.rcard .who{display:inline-block;margin-top:11px;font-size:11.5px;font-weight:800;color:var(--ink-2);background:var(--line-2);padding:4px 11px;border-radius:999px}
+
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px}
+.feat{display:flex;gap:14px;background:var(--cloud);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px}
+.feat .fi{width:42px;height:42px;border-radius:var(--r);background:var(--ntnu-soft);color:var(--ntnu);display:grid;place-items:center;flex-shrink:0}
+.feat .fi svg{width:21px;height:21px}
+.feat h4{font-size:15px;font-weight:800;margin-bottom:4px}
+.feat p{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+
+/* sessions strip */
+.sessions{margin-top:30px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.sessions-h{display:flex;align-items:center;gap:9px;padding:16px 22px;border-bottom:1px solid var(--line-2);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink)}
+.sessions-h svg{width:16px;height:16px;color:var(--cardinal)}
+.srow{display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid var(--line-2)}
+.srow:last-child{border-bottom:none}
+.snum{width:28px;height:28px;border-radius:8px;color:#fff;font-family:var(--serif);font-weight:700;font-size:15px;display:grid;place-items:center;flex-shrink:0}
+.stema{font-weight:800;font-size:14.5px;flex:1;min-width:120px}
+.smeth{font-size:12.5px;font-weight:700;color:var(--ink-2);background:var(--cloud);border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap}
+@media(max-width:620px){.srow{flex-wrap:wrap;gap:8px}.smeth{margin-left:42px}}
+
+/* footer */
+.foot{border-top:1px solid var(--line);margin-top:48px}
+.foot-in{max-width:1080px;margin:0 auto;padding:26px 32px 64px;font-size:13px;color:var(--muted);line-height:1.7}
+.foot-in b{color:var(--ink-2)}
+
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:34px}.feature-grid{grid-template-columns:1fr}.rhythm{grid-template-columns:1fr}.brand{margin-bottom:40px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="brand">
+      <div class="cmark">
+        <svg viewBox="0 0 48 48" width="34" height="34" aria-hidden="true">
+          <circle cx="24" cy="24" r="21" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5"/>
+          <circle class="ring" cx="24" cy="24" r="21" fill="none" stroke="#fff" stroke-width="2.4" stroke-dasharray="2.5 6.2" stroke-linecap="round"/>
+          <g class="needle"><path d="M24 6 L29 24 L24 21 L19 24 Z" fill="#B1040E"/><path d="M24 42 L19 24 L24 27 L29 24 Z" fill="#fff"/></g>
+          <circle cx="24" cy="24" r="2.6" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="nm"><div class="wm"><b>VDC</b> Compass</div><small>INTRO WEEK · WORKSHOPS</small></div>
+    </div>
+
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">VDC Compass · Intro Week 2026</div>
+        <h1>The compass for<br>intro week</h1>
+        <p class="lead">A facilitation tool for the six VDC workshops of intro week. <b>Everything the groups produce happens right here</b> — boards, process maps, simulations and games, all in the browser. No Miro.</p>
+      </div>
+
+      <div class="gate" id="gate">
+        <div class="gate-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>Access</div>
+        <h2 id="gateTitle">Enter access code</h2>
+        <p id="gateText">This workshop space is for the intro-week mentor teams and participants. Enter the code to continue.</p>
+        <form class="gate-form" id="gateForm">
+          <div class="gate-field">
+            <input class="gate-input" id="code" type="password" placeholder="Access code" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Access code">
+          </div>
+          <button class="gate-btn" type="submit" id="gateBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span id="gateBtnTxt">Enter workshop</span>
+          </button>
+          <div class="gate-err" id="err"></div>
+          <div class="gate-hint" id="hint">Provided by your mentor / the organisers.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="ctx">
+  <div class="wrap">
+    <div class="sec-eyebrow">How the week works</div>
+    <h2>One hour of input, one of practice, one of reflection — six times over.</h2>
+    <p class="ctx-lead">Sixty participants, split into mentor teams of twenty and work groups of five. Each three-hour session follows the same rhythm, but the <b>working method changes every time</b> so the activity itself reinforces what the session teaches.</p>
+
+    <div class="rhythm">
+      <div class="rcard" style="--ac:var(--cardinal)"><div class="rnum">Hour 1 · Input</div><h3>Martin Fischer sets the standard</h3><p>Plenary for all 60 — the background, mindset and purpose behind each VDC element.</p><span class="who">All 60 · plenary</span></div>
+      <div class="rcard" style="--ac:var(--ntnu)"><div class="rnum">Hour 2 · Practice</div><h3>The work groups train</h3><p>Groups of five work hands-on with their chosen context, on runnable boards and games.</p><span class="who">Groups of 5</span></div>
+      <div class="rcard" style="--ac:var(--green)"><div class="rnum">Hour 3 · Reflection</div><h3>The mentor team reflects</h3><p>The four groups share and reflect across teams, facilitated by the mentor.</p><span class="who">Mentor team · 4 groups</span></div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feat"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12l-4 4H4z"/><path d="M20 16h-4v4"/></svg></div><div><h4>Runnable workshop tools</h4><p>Sticky-note boards with dot-voting, column sorters, process maps with swimlanes, connection maps, the ICE simulation, and the dice & push/pull games — all saved per group.</p></div></div>
+      <div class="feat"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6M2 12h6m8 0h6M5 5l4 4m6 6l4 4M5 19l4-4m6-6l4-4"/></svg></div><div><h4>Six sessions, six methods</h4><p>Think-pair-share, gallery walk, role simulation, speed critique, game-based learning and World Café — chosen to reach different learning styles and keep the energy up.</p></div></div>
+      <div class="feat"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5"/></svg></div><div><h4>Student & mentor views</h4><p>Switch between the participant worksheet and the mentor view — sample answers, minute-by-minute run-of-show and the facilitator pack. Available in Norwegian and English.</p></div></div>
+      <div class="feat"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></div><div><h4>Collect, share & print</h4><p>Switch between groups, gather every group's work for the cross-team reflection, share between devices with a code, and print to PDF for plenary.</p></div></div>
+    </div>
+
+    <div class="sessions">
+      <div class="sessions-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3 3 0 000-6H9a3 3 0 010-6h6.5"/></svg>The six sessions</div>
+      <div class="srow"><span class="snum" style="background:#00509E">1</span><span class="stema">VDC Intro — the big picture</span><span class="smeth">1 → 2 → 4 → All · Snowball</span></div>
+      <div class="srow"><span class="snum" style="background:#8C1515">2</span><span class="stema">Metrics</span><span class="smeth">Build the board · Gallery walk</span></div>
+      <div class="srow"><span class="snum" style="background:#00509E">3</span><span class="stema">ICE — real-time decisions</span><span class="smeth">Role simulation · After-action review</span></div>
+      <div class="srow"><span class="snum" style="background:#0e7d73">4</span><span class="stema">PPM — process mapping</span><span class="smeth">Hands-on build · Speed critique</span></div>
+      <div class="srow"><span class="snum" style="background:#b5610a">5</span><span class="stema">PPM — variability</span><span class="smeth">Game-based learning</span></div>
+      <div class="srow"><span class="snum" style="background:#5d3fa3">6</span><span class="stema">VIA — information you can trust</span><span class="smeth">Build Master BIM · World Café</span></div>
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <b>Grounded in:</b> Stanford CIFE (Fischer/Kunz), NTNU, and the Lean Communications method. Intro week · August 3–7, 2026.
+  </div>
+</footer>
+
+<script>
+(function(){
+  var TOOL="VDC Compass - Introuka.html";
+  var CODE="vdc2026"; // access code (case-insensitive): VDC2026
+  var gate=document.getElementById("gate");
+  var form=document.getElementById("gateForm");
+  var input=document.getElementById("code");
+  var err=document.getElementById("err");
+  var btnTxt=document.getElementById("gateBtnTxt");
+  var title=document.getElementById("gateTitle");
+  var text=document.getElementById("gateText");
+  var hint=document.getElementById("hint");
+
+  function unlocked(){try{return localStorage.getItem("vdc_unlocked")==="1";}catch(e){return false;}}
+
+  if(unlocked()){
+    gate.classList.add("unlocked");
+    title.textContent="You're in";
+    text.textContent="You already have access on this device. Continue to the workshop tool.";
+    btnTxt.textContent="Continue to the tool";
+    hint.style.display="none";
+  }
+
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    if(gate.classList.contains("unlocked")){ go(); return; }
+    var v=(input.value||"").trim().toLowerCase();
+    if(v===CODE){
+      try{localStorage.setItem("vdc_unlocked","1");}catch(e2){}
+      go();
+    }else{
+      err.textContent="That code didn't work — check with your mentor.";
+      input.classList.add("bad");
+      input.value="";
+      setTimeout(function(){input.classList.remove("bad");},450);
+      input.focus();
+    }
+  });
+
+  function go(){ window.location.href=TOOL; }
+})();
+</script>
+</body>
+</html>
